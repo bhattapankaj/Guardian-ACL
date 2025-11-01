@@ -1,0 +1,42 @@
+
+> acl-guardian@0.1.0 dev
+> next dev --webpack
+
+   ▲ Next.js 16.0.1 (webpack)
+   - Local:        http://localhost:3000
+   - Network:      http://10.255.122.28:3000
+
+ ✓ Starting...
+ ✓ Ready in 1161ms
+ ○ Compiling / ...
+ GET / 200 in 4.7s (compile: 4.5s, render: 182ms)
+ GET / 200 in 214ms (compile: 67ms, render: 146ms)
+ ⨯ ./components/Dashboard.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Dashboard.tsx[0m:209:1]
+ [2m206[0m |       </div>
+ [2m207[0m |     </div>
+ [2m208[0m |   );
+ [2m209[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Expected '</', got '<eof>'
+     ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Dashboard.tsx[0m:209:3]
+ [2m207[0m |     </div>
+ [2m208[0m |   );
+ [2m209[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Dashboard.tsx
+./app/page.tsx
+ GET / 200 in 392ms (compile: 171ms, render: 221ms)
+ GET / 200 in 354ms (compile: 115ms, render: 239ms)
+ GET / 200 in 105ms (compile: 28ms, render: 78ms)
+ GET / 200 in 95ms (compile: 76ms, render: 19ms)
+ GET / 200 in 83ms (compile: 67ms, render: 16ms)
+ GET / 200 in 154ms (compile: 128ms, render: 26ms)
+ GET / 200 in 106ms (compile: 89ms, render: 17ms)

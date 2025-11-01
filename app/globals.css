@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Professional Health Tech Color Scheme */
+  --primary: #0066CC;        /* Medical Blue - trust, professionalism */
+  --primary-dark: #004C99;   /* Darker shade for hover states */
+  --primary-light: #E6F2FF;  /* Light background tint */
+  
+  --secondary: #00CC88;      /* Vibrant Teal - health, vitality */
+  --secondary-dark: #00A870;
+  --secondary-light: #E6FFF7;
+  
+  --accent: #FF6B35;         /* Warm Orange - attention, energy */
+  --accent-dark: #E54D1C;
+  --accent-light: #FFF0EB;
+  
+  --success: #10B981;        /* Green - good status */
+  --warning: #F59E0B;        /* Amber - caution */
+  --danger: #EF4444;         /* Red - high risk */
+  
+  --background: #FAFBFC;     /* Soft off-white */
+  --surface: #FFFFFF;        /* Pure white for cards */
+  --foreground: #1F2937;     /* Dark gray text */
+  --muted: #6B7280;          /* Muted gray for secondary text */
+  --border: #E5E7EB;         /* Light border */
+  
+  /* Shadows for depth */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0F172A;     /* Dark blue-gray */
+    --surface: #1E293B;        /* Lighter surface */
+    --foreground: #F1F5F9;     /* Light text */
+    --muted: #94A3B8;          /* Muted text */
+    --border: #334155;         /* Darker border */
+    
+    /* Adjust primary colors for dark mode */
+    --primary-light: #1E3A5F;
+    --secondary-light: #1A4D3D;
+    --accent-light: #4D2618;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+}
+
+/* Utility classes for consistent styling */
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-surface:hover {
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease-in-out;
 }
