@@ -216,8 +216,8 @@ export default function Home() {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                       <div>
-                        <p class="font-semibold">Apple Watch Coming Soon!</p>
-                        <p class="text-sm text-gray-300">Hang tight - HealthKit integration in progress 🏃‍♂️</p>
+                        <p class="font-semibold">Apple Watch Coming Soon</p>
+                        <p class="text-sm text-gray-300">HealthKit integration in progress</p>
                       </div>
                     `;
                     document.body.appendChild(toast);
@@ -242,8 +242,8 @@ export default function Home() {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                       <div>
-                        <p class="font-semibold">Garmin Coming Soon!</p>
-                        <p class="text-sm text-gray-300">Hang tight - Garmin Connect integration on the way 🚴‍♀️</p>
+                        <p class="font-semibold">Garmin Coming Soon</p>
+                        <p class="text-sm text-gray-300">Garmin Connect integration on the way</p>
                       </div>
                     `;
                     document.body.appendChild(toast);
@@ -260,7 +260,7 @@ export default function Home() {
             </div>
             
             <p className="text-sm text-gray-500 mt-6 px-4">
-              Multi-device support for comprehensive injury prevention 🎯
+              Multi-device support for comprehensive injury prevention
             </p>
           </div>
 
