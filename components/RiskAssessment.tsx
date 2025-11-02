@@ -45,6 +45,7 @@ interface MLRiskData {
 export default function RiskAssessment({ userId }: RiskAssessmentProps) {
   const [loading, setLoading] = useState(true);
   const [riskData, setRiskData] = useState<MLRiskData | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchRiskData();
@@ -52,12 +53,14 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
 
   const fetchRiskData = async () => {
     setLoading(true);
+    setError(false);
     try {
       // Use NEW ML endpoint for real-time risk assessment
       const response = await axios.get(`${API_BASE_URL}/api/risk/realtime/${userId}`);
       setRiskData(response.data);
     } catch (error) {
       console.error('Error fetching ML risk data:', error);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -67,6 +70,30 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066CC]"></div>
+        <p className="ml-4 text-gray-600">Analyzing your risk factors...</p>
+      </div>
+    );
+  }
+
+  if (error || !riskData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-2xl border-2 border-gray-200 shadow-lg max-w-md text-center">
+          <AlertTriangle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">No Fitbit Data Available</h2>
+          <p className="text-gray-600 mb-4">
+            We need your Fitbit activity data to perform ML risk assessment.
+          </p>
+          <p className="text-sm text-gray-500">
+            Make sure your Fitbit device is synced and you have recent activity data.
+          </p>
+          <button 
+            onClick={fetchRiskData}
+            className="mt-6 px-6 py-3 bg-[#0066CC] text-white rounded-lg font-semibold hover:bg-[#0052A3] transition-colors"
+          >
+            Retry Analysis
+          </button>
+        </div>
       </div>
     );
   }

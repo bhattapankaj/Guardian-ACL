@@ -27,6 +27,7 @@ export default function Recommendations({ userId }: RecommendationsProps) {
   const [mlRecommendations, setMlRecommendations] = useState<string[]>([]);
   const [riskLevel, setRiskLevel] = useState<string>('');
   const [riskComponents, setRiskComponents] = useState<any>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchRecommendations();
@@ -34,6 +35,7 @@ export default function Recommendations({ userId }: RecommendationsProps) {
 
   const fetchRecommendations = async () => {
     setLoading(true);
+    setError(false);
     try {
       // Get ML recommendations from real-time endpoint
       const response = await axios.get<MLRiskData>(`${API_BASE_URL}/api/risk/realtime/${userId}`);
@@ -42,6 +44,7 @@ export default function Recommendations({ userId }: RecommendationsProps) {
       setRiskComponents(response.data.risk_components);
     } catch (error) {
       console.error('Error fetching ML recommendations:', error);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -51,6 +54,30 @@ export default function Recommendations({ userId }: RecommendationsProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066CC]"></div>
+        <p className="ml-4 text-gray-600">Loading personalized recommendations...</p>
+      </div>
+    );
+  }
+
+  if (error || mlRecommendations.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-2xl border-2 border-gray-200 shadow-lg max-w-md text-center">
+          <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">No Fitbit Data Available</h2>
+          <p className="text-gray-600 mb-4">
+            We need your Fitbit activity data to generate personalized prevention recommendations.
+          </p>
+          <p className="text-sm text-gray-500">
+            Sync your Fitbit device and ensure you have recent activity data to get ML-powered insights.
+          </p>
+          <button 
+            onClick={fetchRecommendations}
+            className="mt-6 px-6 py-3 bg-[#0066CC] text-white rounded-lg font-semibold hover:bg-[#0052A3] transition-colors"
+          >
+            Retry Loading
+          </button>
+        </div>
       </div>
     );
   }

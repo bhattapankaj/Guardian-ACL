@@ -57,6 +57,7 @@ export default function Dashboard({ userId }: DashboardProps) {
   const [riskLoading, setRiskLoading] = useState(true);
   const [activityData, setActivityData] = useState<ActivityData[]>([]);
   const [riskData, setRiskData] = useState<MLRiskData | null>(null);
+  const [noData, setNoData] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -65,14 +66,23 @@ export default function Dashboard({ userId }: DashboardProps) {
   const fetchDashboardData = async () => {
     setLoading(true);
     setRiskLoading(true);
+    setNoData(false);
     
     // Fetch activity data FIRST (fast)
     try {
       const activityResponse = await axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=7`);
-      setActivityData(activityResponse.data.activities || []);
-      setLoading(false); // Show activity data immediately!
+      const activities = activityResponse.data.activities || [];
+      setActivityData(activities);
+      
+      // Check if we have any real data
+      if (activities.length === 0 || activities.every((a: ActivityData) => a.steps === 0)) {
+        setNoData(true);
+      }
+      
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching activity data:', error);
+      setNoData(true);
       setLoading(false);
     }
     
@@ -87,12 +97,36 @@ export default function Dashboard({ userId }: DashboardProps) {
     }
   };
 
-  // Show spinner only while loading activity data (fast)
-  if (loading && activityData.length === 0) {
+  // Show spinner while loading
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066CC]"></div>
         <p className="ml-4 text-gray-600">Loading your Fitbit data...</p>
+      </div>
+    );
+  }
+
+  // Show "No Data" message if no Fitbit data detected
+  if (noData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-2xl border-2 border-gray-200 shadow-lg max-w-md text-center">
+          <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">No Fitbit Data Detected</h2>
+          <p className="text-gray-600 mb-4">
+            We couldn't find any activity data from your Fitbit device. 
+          </p>
+          <p className="text-sm text-gray-500">
+            Make sure your Fitbit device is synced and you have recent activity data in your Fitbit app.
+          </p>
+          <button 
+            onClick={fetchDashboardData}
+            className="mt-6 px-6 py-3 bg-[#0066CC] text-white rounded-lg font-semibold hover:bg-[#0052A3] transition-colors"
+          >
+            Retry Loading Data
+          </button>
+        </div>
       </div>
     );
   }
