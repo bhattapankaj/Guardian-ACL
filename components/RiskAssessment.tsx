@@ -142,7 +142,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
           <div className="flex-shrink-0">{getRiskIcon(riskData.risk_color)}</div>
           <div className="flex-1">
             <div className="text-xs sm:text-sm font-medium uppercase tracking-wide mb-1 sm:mb-2">
-              🧠 Real-Time ML ACL Injury Risk
+              Real-Time ML ACL Injury Risk
             </div>
             <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 uppercase">
               {riskData.risk_level}

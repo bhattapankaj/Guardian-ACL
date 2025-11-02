@@ -118,7 +118,7 @@ export default function Dashboard({ userId }: DashboardProps) {
         <div className="flex flex-col sm:flex-row items-start justify-between mb-4 sm:mb-6 gap-4">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
-              🧠 Real-Time ML Risk Score
+              Real-Time ML Risk Score
             </h2>
             <p className="text-xs sm:text-sm opacity-75">
               {riskLoading ? 'Analyzing your Fitbit data with ML model...' : 

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+          ML-Powered Prevention Plan
+        </h1>s';
 import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -99,10 +101,9 @@ export default function Recommendations({ userId }: RecommendationsProps) {
       {/* ML Recommendations */}
       {mlRecommendations.length > 0 ? (
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#0066CC] mr-2" />
-            Your Personalized Action Items
-          </h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-900">
+          Recommended Prevention Programs
+        </h2>
           <div className="space-y-3 sm:space-y-4">
             {mlRecommendations.map((rec, index) => {
               const priority = getRecommendationPriority(rec);
