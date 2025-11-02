@@ -315,6 +315,52 @@ async def sync_fitbit_data(user_id: int, days: int = 14, db: Session = Depends(g
         "last_sync": user.last_sync_at.isoformat()
     }
 
+
+@app.get("/api/fitbit/activity/{user_id}")
+async def get_fitbit_activity(user_id: int, days: int = 7, db: Session = Depends(get_db)):
+    """
+    Get user's Fitbit activity data from database.
+    Returns last N days of synced activity data.
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get activity data from database
+    end_date = date.today()
+    start_date = end_date - timedelta(days=days)
+    
+    activity_records = db.query(ActivityData).filter(
+        ActivityData.user_id == user_id,
+        ActivityData.date >= start_date,
+        ActivityData.date <= end_date
+    ).order_by(ActivityData.date.desc()).all()
+    
+    if not activity_records:
+        return {
+            "activities": [],
+            "message": "No activity data found. Please sync your Fitbit data first."
+        }
+    
+    # Format activity data for frontend
+    activities = []
+    for record in activity_records:
+        activities.append({
+            "date": record.date.isoformat(),
+            "steps": record.steps,
+            "distance": record.distance,
+            "calories": record.calories,
+            "active_minutes": record.active_minutes,
+            "heart_rate_avg": record.resting_heart_rate,
+            "sleep_hours": record.sleep_duration_minutes / 60 if record.sleep_duration_minutes else 0,
+            "cadence": record.cadence_score,
+            "asymmetry_score": 0,  # Not available yet
+            "load_score": record.load_score
+        })
+    
+    return {"activities": activities}
+
+
 @app.get("/user/{user_id}/profile")
 def get_user_profile(user_id: str):
     """Get user profile information"""
