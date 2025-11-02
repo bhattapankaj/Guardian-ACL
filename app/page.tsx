@@ -261,10 +261,6 @@ export default function Home() {
               Multi-device support for comprehensive injury prevention 🎯
             </p>
           </div>
-            <p className="text-xs sm:text-sm text-gray-500 mt-4">
-              Works with Fitbit, Apple Watch, and Garmin devices
-            </p>
-          </div>
 
           {/* Louisiana Focus */}
           <div className="mt-12 sm:mt-16 max-w-4xl mx-auto bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-[#FF6B35] p-6 sm:p-8 rounded-r-2xl shadow-md">
