@@ -81,7 +81,7 @@ export default function Recommendations({ userId }: RecommendationsProps) {
       {/* Header */}
       <div className={`bg-gradient-to-r ${getRiskColorClass()} p-6 sm:p-8 lg:p-10 rounded-2xl text-white shadow-xl`}>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-          🧠 ML-Powered Prevention Plan
+          ML-Powered Prevention Plan
         </h1>
         <p className="text-white/90 text-sm sm:text-base lg:text-lg">
           Personalized recommendations based on your real Fitbit activity patterns
@@ -167,7 +167,7 @@ export default function Recommendations({ userId }: RecommendationsProps) {
       {/* Resources Section */}
       <div className="bg-gradient-to-r from-green-50 via-teal-50 to-blue-50 p-4 sm:p-6 lg:p-8 rounded-2xl border-2 border-green-200 shadow-md">
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
-          🏃‍♂️ Recommended Prevention Programs
+          Recommended Prevention Programs
         </h3>
         <div className="space-y-3 sm:space-y-4">
           <div className="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-green-100">
