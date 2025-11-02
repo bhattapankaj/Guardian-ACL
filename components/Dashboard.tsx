@@ -54,6 +54,7 @@ interface MLRiskData {
 
 export default function Dashboard({ userId }: DashboardProps) {
   const [loading, setLoading] = useState(true);
+  const [riskLoading, setRiskLoading] = useState(true);
   const [activityData, setActivityData] = useState<ActivityData[]>([]);
   const [riskData, setRiskData] = useState<MLRiskData | null>(null);
 
@@ -63,33 +64,35 @@ export default function Dashboard({ userId }: DashboardProps) {
 
   const fetchDashboardData = async () => {
     setLoading(true);
+    setRiskLoading(true);
+    
+    // Fetch activity data FIRST (fast)
     try {
-      // Use NEW ML endpoint for real-time risk assessment
-      const [activityResponse, riskResponse] = await Promise.all([
-        axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=7`),
-        axios.get(`${API_BASE_URL}/api/risk/realtime/${userId}`)
-      ]);
-      
+      const activityResponse = await axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=7`);
       setActivityData(activityResponse.data.activities || []);
+      setLoading(false); // Show activity data immediately!
+    } catch (error) {
+      console.error('Error fetching activity data:', error);
+      setLoading(false);
+    }
+    
+    // Then fetch ML risk data (may take longer)
+    try {
+      const riskResponse = await axios.get(`${API_BASE_URL}/api/risk/realtime/${userId}`);
       setRiskData(riskResponse.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      // Fallback: try to get activity data at least
-      try {
-        const activityResponse = await axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=7`);
-        setActivityData(activityResponse.data.activities || []);
-      } catch (activityError) {
-        console.error('Error fetching activity data:', activityError);
-      }
+      console.error('Error fetching ML risk data:', error);
     } finally {
-      setLoading(false);
+      setRiskLoading(false);
     }
   };
 
-  if (loading) {
+  // Show spinner only while loading activity data (fast)
+  if (loading && activityData.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066CC]"></div>
+        <p className="ml-4 text-gray-600">Loading your Fitbit data...</p>
       </div>
     );
   }
@@ -118,24 +121,39 @@ export default function Dashboard({ userId }: DashboardProps) {
               🧠 Real-Time ML Risk Score
             </h2>
             <p className="text-xs sm:text-sm opacity-75">
-              {riskData ? `Analyzed ${riskData.data_days} days of your Fitbit data` : 'Loading real ML predictions...'}
+              {riskLoading ? 'Analyzing your Fitbit data with ML model...' : 
+               riskData ? `Analyzed ${riskData.data_days} days of your Fitbit data` : 
+               'ML risk calculation unavailable'}
             </p>
           </div>
-          <AlertCircle className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" />
+          {riskLoading ? (
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
+          ) : (
+            <AlertCircle className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" />
+          )}
         </div>
         
         <div className="flex items-end space-x-3 sm:space-x-4 mb-4">
-          <div className="text-5xl sm:text-6xl lg:text-7xl font-bold">
-            {riskData?.risk_score?.toFixed(1) || '—'}
-          </div>
-          <div className="text-xl sm:text-2xl font-semibold mb-1 sm:mb-2">/ 100</div>
+          {riskLoading ? (
+            <div className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-current"></div>
+              <span className="text-2xl font-semibold">Calculating...</span>
+            </div>
+          ) : (
+            <>
+              <div className="text-5xl sm:text-6xl lg:text-7xl font-bold">
+                {riskData?.risk_score?.toFixed(1) || '—'}
+              </div>
+              <div className="text-xl sm:text-2xl font-semibold mb-1 sm:mb-2">/ 100</div>
+            </>
+          )}
         </div>
         
         <div className="mt-4">
           <div className="text-base sm:text-lg font-semibold uppercase tracking-wide">
-            {riskData?.risk_level || 'LOADING'} Risk
+            {riskLoading ? 'ANALYZING' : riskData?.risk_level || 'UNKNOWN'} Risk
           </div>
-          {riskData && riskData.recommendations.length > 0 && (
+          {!riskLoading && riskData && riskData.recommendations.length > 0 && (
             <div className="mt-3 p-3 bg-white/30 rounded-lg">
               <p className="text-sm font-medium">💡 Top Recommendation:</p>
               <p className="text-xs mt-1">{riskData.recommendations[0]}</p>
