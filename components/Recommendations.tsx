@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-          ML-Powered Prevention Plan
-        </h1>s';
+import axios from 'axios';
 import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
