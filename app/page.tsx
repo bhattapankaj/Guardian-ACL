@@ -9,7 +9,8 @@ import RiskAssessment from '@/components/RiskAssessment';
 import Recommendations from '@/components/Recommendations';
 import ActivityChart from '@/components/ActivityChart';
 
-const API_BASE_URL = 'http://localhost:8000';
+// Use environment variable for API URL (falls back to localhost for development)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function Home() {
   const [isConnected, setIsConnected] = useState(false);
