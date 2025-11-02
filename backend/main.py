@@ -18,6 +18,9 @@ from app.encryption import encrypt_token, decrypt_token
 from app.fitbit_auth import generate_authorization_url, exchange_code_for_tokens, refresh_access_token, calculate_token_expiry, is_token_expired
 from app.fitbit_data import FitbitDataService, calculate_cadence, calculate_load_score, calculate_impact_score, calculate_consistency_score
 
+# Import ML risk assessment endpoints
+from app.risk_api import router as risk_router
+
 load_dotenv()
 
 app = FastAPI(title="ACL Guardian API", version="2.0.0 - Real Fitbit Integration")
@@ -39,6 +42,9 @@ async def startup_event():
     init_db()
     print("🚀 ACL Guardian API started with Fitbit integration!")
     print(f"📡 Frontend URL: {FRONTEND_URL}")
+
+# Include ML risk assessment router
+app.include_router(risk_router, tags=["Risk Assessment - ML Powered"])
 
 # Models
 class FitbitAuthRequest(BaseModel):
