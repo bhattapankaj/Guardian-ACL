@@ -15,37 +15,82 @@ export default function Home() {
   const [isConnected, setIsConnected] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
     // Check if user is already connected
     const savedUserId = localStorage.getItem('acl_guardian_user_id');
+    const savedLastSync = localStorage.getItem('acl_guardian_last_sync');
+    
     if (savedUserId) {
       setUserId(savedUserId);
       setIsConnected(true);
+      setLastSync(savedLastSync);
+    }
+
+    // Check URL params for OAuth callback
+    const params = new URLSearchParams(window.location.search);
+    const connected = params.get('connected');
+    const user_id = params.get('user_id');
+    const error = params.get('error');
+
+    if (connected === 'true' && user_id) {
+      setUserId(user_id);
+      setIsConnected(true);
+      localStorage.setItem('acl_guardian_user_id', user_id);
+      
+      // Trigger initial sync
+      handleSync(user_id);
+      
+      // Clean up URL
+      window.history.replaceState({}, '', '/');
+    } else if (error) {
+      alert(`Connection failed: ${error}`);
+      window.history.replaceState({}, '', '/');
     }
   }, []);
 
-  const handleDemoConnection = async () => {
-    setLoading(true);
+  const handleFitbitConnection = () => {
+    // Redirect to backend OAuth endpoint
+    window.location.href = `${API_BASE_URL}/api/fitbit/authorize`;
+  };
+
+  const handleSync = async (user_id?: string) => {
+    const targetUserId = user_id || userId;
+    if (!targetUserId) return;
+
+    setSyncing(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/demo/generate-sample-data`);
-      const demoUserId = response.data.user_id;
-      setUserId(demoUserId);
-      setIsConnected(true);
-      localStorage.setItem('acl_guardian_user_id', demoUserId);
+      const response = await axios.post(`${API_BASE_URL}/api/fitbit/sync/${targetUserId}`);
+      const syncTime = new Date().toISOString();
+      setLastSync(syncTime);
+      localStorage.setItem('acl_guardian_last_sync', syncTime);
+      
+      console.log('✅ Sync complete:', response.data);
     } catch (error) {
-      console.error('Error connecting demo:', error);
-      alert('Failed to connect. Make sure the backend is running on port 8000.');
+      console.error('❌ Sync failed:', error);
+      alert('Failed to sync Fitbit data. Please try again.');
     } finally {
-      setLoading(false);
+      setSyncing(false);
     }
   };
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
+    if (!userId) return;
+
+    try {
+      await axios.post(`${API_BASE_URL}/api/fitbit/disconnect/${userId}`);
+    } catch (error) {
+      console.error('Error disconnecting:', error);
+    }
+
     setIsConnected(false);
     setUserId(null);
+    setLastSync(null);
     localStorage.removeItem('acl_guardian_user_id');
+    localStorage.removeItem('acl_guardian_last_sync');
   };
 
   if (!isConnected) {
@@ -132,10 +177,10 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-gray-900">Ready to protect your knees?</h2>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-4">
-              No new hardware needed. Just connect your existing smartwatch and get started.
+              Connect your Fitbit and start monitoring your ACL injury risk today.
             </p>
             <button
-              onClick={handleDemoConnection}
+              onClick={handleFitbitConnection}
               disabled={loading}
               className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#0066CC] to-[#0052A3] text-white text-base sm:text-lg font-semibold rounded-xl hover:from-[#0052A3] hover:to-[#003D7A] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
@@ -146,13 +191,14 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  Try Demo Now
+                  <Activity className="w-5 h-5 mr-2" />
+                  Connect My Fitbit
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </>
               )}
             </button>
             <p className="text-xs sm:text-sm text-gray-500 mt-4">
-              Demo mode uses sample data for demonstration
+              Works with Fitbit, Apple Watch, and Garmin devices
             </p>
           </div>
 
@@ -195,15 +241,44 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-lg sm:text-xl font-bold text-gray-900">ACL Guardian</h1>
-                <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Injury Prevention Dashboard</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <p className="text-xs text-gray-500">Fitbit Connected</p>
+                  </div>
+                  {lastSync && (
+                    <p className="text-xs text-gray-400 hidden sm:block">
+                      • Last sync: {new Date(lastSync).toLocaleTimeString()}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-            <button
-              onClick={handleDisconnect}
-              className="px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
-            >
-              Disconnect
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleSync()}
+                disabled={syncing}
+                className="px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                {syncing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                    <span className="hidden sm:inline">Syncing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Activity className="w-3 h-3" />
+                    <span className="hidden sm:inline">Sync Now</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleDisconnect}
+                className="px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+              >
+                Disconnect
+              </button>
+            </div>
           </div>
         </div>
       </header>
