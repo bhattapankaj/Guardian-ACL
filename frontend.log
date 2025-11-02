@@ -41,3 +41,4 @@ Import trace for requested module:
  GET / 200 in 154ms (compile: 128ms, render: 26ms)
  GET / 200 in 106ms (compile: 89ms, render: 17ms)
    Reload env: .env.local
+   Reload env: .env.local
