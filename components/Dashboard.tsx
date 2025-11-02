@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Activity, Heart, Footprints, TrendingUp, AlertCircle } from 'lucide-react';
+import { Activity, Heart, Footprints, TrendingUp, AlertCircle, Flame, Moon, Bike, Timer } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -16,8 +16,18 @@ interface ActivityData {
   distance: number;
   calories: number;
   active_minutes: number;
+  sedentary_minutes?: number;
+  lightly_active_minutes?: number;
+  fairly_active_minutes?: number;
+  very_active_minutes?: number;
   heart_rate_avg: number;
   sleep_hours?: number;
+  sleep_efficiency?: number;
+  deep_sleep_minutes?: number;
+  light_sleep_minutes?: number;
+  rem_sleep_minutes?: number;
+  cadence?: number;
+  load_score?: number;
 }
 
 // ML Risk Assessment Response from /api/risk/realtime
@@ -275,6 +285,180 @@ export default function Dashboard({ userId }: DashboardProps) {
           ))}
         </div>
       </div>
+
+      {/* Comprehensive Fitbit Activity Details */}
+      {todayActivity && (
+        <>
+          {/* Calories & Active Minutes */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-gray-600 text-xs sm:text-sm font-medium">Calories Burned</span>
+                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {todayActivity.calories?.toLocaleString() || '—'}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-500 mt-1">kcal today</div>
+            </div>
+
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-gray-600 text-xs sm:text-sm font-medium">Active Minutes</span>
+                <Timer className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {todayActivity.active_minutes || '—'}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-500 mt-1">minutes active</div>
+            </div>
+
+            {todayActivity.very_active_minutes !== undefined && (
+              <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <span className="text-gray-600 text-xs sm:text-sm font-medium">Very Active</span>
+                  <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  {todayActivity.very_active_minutes}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">intense minutes</div>
+              </div>
+            )}
+
+            {todayActivity.cadence !== undefined && todayActivity.cadence > 0 && (
+              <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <span className="text-gray-600 text-xs sm:text-sm font-medium">Cadence</span>
+                  <Footprints className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  {todayActivity.cadence.toFixed(0)}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">steps/min</div>
+              </div>
+            )}
+          </div>
+
+          {/* Sleep Details (if available) */}
+          {(todayActivity.sleep_hours && todayActivity.sleep_hours > 0) && (
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-indigo-200">
+              <div className="flex items-center mb-4">
+                <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 mr-2" />
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sleep Analysis</h3>
+              </div>
+              
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div>
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">Total Sleep</div>
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {todayActivity.sleep_hours.toFixed(1)}h
+                  </div>
+                </div>
+                
+                {todayActivity.sleep_efficiency !== undefined && (
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1">Efficiency</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                      {todayActivity.sleep_efficiency.toFixed(0)}%
+                    </div>
+                  </div>
+                )}
+                
+                {todayActivity.deep_sleep_minutes !== undefined && (
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1">Deep Sleep</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                      {Math.round(todayActivity.deep_sleep_minutes)}m
+                    </div>
+                  </div>
+                )}
+                
+                {todayActivity.rem_sleep_minutes !== undefined && (
+                  <div>
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1">REM Sleep</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                      {Math.round(todayActivity.rem_sleep_minutes)}m
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Activity Intensity Breakdown */}
+          {(todayActivity.lightly_active_minutes !== undefined || 
+            todayActivity.fairly_active_minutes !== undefined || 
+            todayActivity.very_active_minutes !== undefined) && (
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">
+              <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900">
+                Activity Intensity Breakdown
+              </h3>
+              <div className="space-y-3 sm:space-y-4">
+                {todayActivity.sedentary_minutes !== undefined && (
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-2">
+                      <span className="font-medium text-gray-700">Sedentary</span>
+                      <span className="font-semibold text-gray-900">{todayActivity.sedentary_minutes} min</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
+                      <div
+                        className="h-2 sm:h-2.5 rounded-full bg-gray-400 transition-all"
+                        style={{ width: `${Math.min((todayActivity.sedentary_minutes / 1440) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                
+                {todayActivity.lightly_active_minutes !== undefined && (
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-2">
+                      <span className="font-medium text-gray-700">Lightly Active</span>
+                      <span className="font-semibold text-gray-900">{todayActivity.lightly_active_minutes} min</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
+                      <div
+                        className="h-2 sm:h-2.5 rounded-full bg-green-400 transition-all"
+                        style={{ width: `${Math.min((todayActivity.lightly_active_minutes / 360) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                
+                {todayActivity.fairly_active_minutes !== undefined && (
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-2">
+                      <span className="font-medium text-gray-700">Fairly Active</span>
+                      <span className="font-semibold text-gray-900">{todayActivity.fairly_active_minutes} min</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
+                      <div
+                        className="h-2 sm:h-2.5 rounded-full bg-yellow-400 transition-all"
+                        style={{ width: `${Math.min((todayActivity.fairly_active_minutes / 180) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                
+                {todayActivity.very_active_minutes !== undefined && (
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-2">
+                      <span className="font-medium text-gray-700">Very Active</span>
+                      <span className="font-semibold text-gray-900">{todayActivity.very_active_minutes} min</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
+                      <div
+                        className="h-2 sm:h-2.5 rounded-full bg-red-500 transition-all"
+                        style={{ width: `${Math.min((todayActivity.very_active_minutes / 60) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {/* Weekly Activity Trend */}
       <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">

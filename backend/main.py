@@ -351,11 +351,20 @@ async def get_fitbit_activity(user_id: int, days: int = 7, db: Session = Depends
             "distance": record.distance,
             "calories": record.calories,
             "active_minutes": record.active_minutes,
+            "sedentary_minutes": record.sedentary_minutes,
+            "lightly_active_minutes": record.lightly_active_minutes,
+            "fairly_active_minutes": record.fairly_active_minutes,
+            "very_active_minutes": record.very_active_minutes,
             "heart_rate_avg": record.resting_heart_rate,
-            "sleep_hours": record.sleep_duration_minutes / 60 if record.sleep_duration_minutes else 0,
+            "sleep_hours": record.sleep_duration_minutes / 60 if record.sleep_duration_minutes else None,
+            "sleep_efficiency": record.sleep_efficiency,
+            "deep_sleep_minutes": record.deep_sleep_minutes,
+            "light_sleep_minutes": record.light_sleep_minutes,
+            "rem_sleep_minutes": record.rem_sleep_minutes,
             "cadence": record.cadence_score,
-            "asymmetry_score": 0,  # Not available yet
-            "load_score": record.load_score
+            "asymmetry_score": record.asymmetry_score or 0,
+            "load_score": record.load_score,
+            "impact_score": record.impact_score
         })
     
     return {"activities": activities}
