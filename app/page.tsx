@@ -175,29 +175,92 @@ export default function Home() {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-gray-900">Ready to protect your knees?</h2>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-4">
-              Connect your Fitbit and start monitoring your ACL injury risk today.
+              Connect your wearable device and start monitoring your ACL injury risk today.
             </p>
-            <button
-              onClick={handleFitbitConnection}
-              disabled={loading}
-              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#0066CC] to-[#0052A3] text-white text-base sm:text-lg font-semibold rounded-xl hover:from-[#0052A3] hover:to-[#003D7A] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Activity className="w-5 h-5 mr-2" />
-                  Connect My Fitbit
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </button>
+            
+            {/* Device Connection Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
+              {/* Fitbit Button */}
+              <button
+                onClick={handleFitbitConnection}
+                disabled={loading}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#0066CC] to-[#0052A3] text-white text-base sm:text-lg font-semibold rounded-xl hover:from-[#0052A3] hover:to-[#003D7A] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Activity className="w-5 h-5 mr-2" />
+                    Connect Fitbit
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </>
+                )}
+              </button>
+
+              {/* Apple Watch Button */}
+              <button
+                onClick={() => {
+                  // Show toast notification
+                  const toast = document.createElement('div');
+                  toast.className = 'fixed top-4 right-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 animate-slide-in-right flex items-center gap-3';
+                  toast.innerHTML = `
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                      <p class="font-semibold">Apple Watch Coming Soon!</p>
+                      <p class="text-sm text-gray-300">Hang tight - HealthKit integration in progress 🏃‍♂️</p>
+                    </div>
+                  `;
+                  document.body.appendChild(toast);
+                  setTimeout(() => toast.remove(), 4000);
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white text-base sm:text-lg font-semibold rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                </svg>
+                Connect Apple Watch
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </button>
+
+              {/* Garmin Button */}
+              <button
+                onClick={() => {
+                  const toast = document.createElement('div');
+                  toast.className = 'fixed top-4 right-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-6 py-4 rounded-xl shadow-2xl z-50 animate-slide-in-right flex items-center gap-3';
+                  toast.innerHTML = `
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                      <p class="font-semibold">Garmin Coming Soon!</p>
+                      <p class="text-sm text-gray-300">Hang tight - Garmin Connect integration on the way 🚴‍♀️</p>
+                    </div>
+                  `;
+                  document.body.appendChild(toast);
+                  setTimeout(() => toast.remove(), 4000);
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-base sm:text-lg font-semibold rounded-xl hover:from-blue-500 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                Connect Garmin
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </button>
+            </div>
+            
+            <p className="text-sm text-gray-500 mt-6 px-4">
+              Multi-device support for comprehensive injury prevention 🎯
+            </p>
+          </div>
             <p className="text-xs sm:text-sm text-gray-500 mt-4">
               Works with Fitbit, Apple Watch, and Garmin devices
             </p>
