@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { Activity, Heart, TrendingUp, AlertTriangle, CheckCircle, ArrowRight, Edit } from 'lucide-react';
+import { Activity, Heart, TrendingUp, AlertTriangle, CheckCircle, ArrowRight, Edit, User } from 'lucide-react';
 import Dashboard from '@/components/Dashboard';
 import RiskAssessment from '@/components/RiskAssessment';
 import Recommendations from '@/components/Recommendations';
 import ActivityChart from '@/components/ActivityChart';
 import ManualDataEntry from '@/components/ManualDataEntry';
+import UserProfile from '@/components/UserProfile';
 
 // Use environment variable for API URL (falls back to localhost for development)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -394,6 +395,7 @@ export default function Home() {
               { id: 'risk', label: 'Risk Assessment', icon: AlertTriangle },
               { id: 'recommendations', label: 'Prevention', icon: CheckCircle },
               { id: 'activity', label: 'Trends', icon: TrendingUp },
+              { id: 'profile', label: 'Profile', icon: User },
               { id: 'manual-entry', label: 'Manual Entry', icon: Edit }
             ].map((tab) => (
               <button
@@ -420,6 +422,7 @@ export default function Home() {
         {activeTab === 'risk' && userId && <RiskAssessment userId={userId} />}
         {activeTab === 'recommendations' && userId && <Recommendations userId={userId} />}
         {activeTab === 'activity' && userId && <ActivityChart userId={userId} />}
+        {activeTab === 'profile' && userId && <UserProfile userId={userId} />}
         {activeTab === 'manual-entry' && userId && (
           <ManualDataEntry 
             userId={userId} 
