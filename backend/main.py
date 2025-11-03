@@ -709,10 +709,20 @@ def save_manual_activity_data(user_id: str, data: ManualActivityData, db: Sessio
     This allows athletes using Whoop, Polar, or other devices to input their data.
     """
     try:
-        # Verify user exists
+        # Verify user exists, create if not (for manual entry users)
         user = db.query(User).filter(User.user_id == user_id).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            # Create a new user for manual data entry
+            user = User(
+                user_id=user_id,
+                fitbit_user_id=None,  # Manual entry users don't have Fitbit
+                access_token=None,
+                refresh_token=None,
+                token_expires_at=None
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
         
         # Parse date
         activity_date = datetime.strptime(data.date, "%Y-%m-%d").date()
