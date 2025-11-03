@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import { Activity, Heart, TrendingUp, AlertTriangle, CheckCircle, ArrowRight, Edit, User } from 'lucide-react';
@@ -21,6 +21,7 @@ export default function Home() {
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [refreshKey, setRefreshKey] = useState(0); // Force re-render of Dashboard
 
   useEffect(() => {
     // Check if user is already connected
@@ -418,11 +419,20 @@ export default function Home() {
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {activeTab === 'dashboard' && userId && <Dashboard userId={userId} />}
-        {activeTab === 'risk' && userId && <RiskAssessment userId={userId} />}
+        {activeTab === 'dashboard' && userId && <Dashboard key={refreshKey} userId={userId} />}
+        {activeTab === 'risk' && userId && <RiskAssessment key={refreshKey} userId={userId} />}
         {activeTab === 'recommendations' && userId && <Recommendations userId={userId} />}
         {activeTab === 'activity' && userId && <ActivityChart userId={userId} />}
-        {activeTab === 'profile' && userId && <UserProfile userId={userId} />}
+        {activeTab === 'profile' && userId && (
+          <UserProfile 
+            userId={userId} 
+            onProfileSaved={() => {
+              // Refresh Dashboard and Risk tabs with new profile data
+              setRefreshKey(prev => prev + 1);
+              console.log('✅ Profile saved - refreshing risk calculations...');
+            }}
+          />
+        )}
         {activeTab === 'manual-entry' && userId && (
           <ManualDataEntry 
             userId={userId} 

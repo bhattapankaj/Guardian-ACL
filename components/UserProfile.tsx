@@ -8,6 +8,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface UserProfileProps {
   userId: string;
+  onProfileSaved?: () => void; // Callback to refresh risk calculation after profile update
 }
 
 interface ProfileData {
@@ -23,7 +24,7 @@ interface ProfileData {
   weight_kg: number | null;
 }
 
-export default function UserProfile({ userId }: UserProfileProps) {
+export default function UserProfile({ userId, onProfileSaved }: UserProfileProps) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -47,6 +48,11 @@ export default function UserProfile({ userId }: UserProfileProps) {
       await axios.post(`${API_BASE_URL}/api/user/${userId}/profile`, profile);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
+      
+      // Notify parent to refresh risk calculation with updated profile data
+      if (onProfileSaved) {
+        onProfileSaved();
+      }
     } catch (error) {
       console.error('Error saving profile:', error);
       alert('Failed to save profile. Please try again.');
@@ -103,7 +109,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
             <select
               value={profile.sex}
               onChange={(e) => handleChange('sex', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium"
             >
               <option value="M">Male</option>
               <option value="F">Female</option>
@@ -124,7 +130,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
               placeholder="25"
               min="10"
               max="100"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             />
           </div>
 
@@ -140,7 +146,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
               placeholder="170"
               min="100"
               max="250"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             />
             <p className="text-xs text-gray-500 mt-1">Used for BMI calculation</p>
           </div>
@@ -158,7 +164,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
               min="30"
               max="200"
               step="0.1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             />
             <p className="text-xs text-gray-500 mt-1">Can also sync from Fitbit</p>
           </div>
@@ -178,7 +184,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
             <select
               value={profile.sport}
               onChange={(e) => handleChange('sport', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             >
               <option value="none">None / General Fitness</option>
               <option value="football">Football</option>
@@ -200,7 +206,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
             <select
               value={profile.limb_dominance}
               onChange={(e) => handleChange('limb_dominance', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             >
               <option value="right">Right</option>
               <option value="left">Left</option>
@@ -242,7 +248,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
                 type="date"
                 value={profile.acl_injury_date || ''}
                 onChange={(e) => handleChange('acl_injury_date', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
               />
             </div>
           )}
@@ -255,7 +261,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
             <select
               value={profile.rehab_status}
               onChange={(e) => handleChange('rehab_status', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2.5 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-900 font-medium placeholder-slate-400"
             >
               <option value="none">Not in rehab</option>
               <option value="active_rehab">Currently in active rehab</option>

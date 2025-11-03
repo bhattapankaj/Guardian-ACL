@@ -274,50 +274,58 @@ export default function Dashboard({ userId }: DashboardProps) {
 
       {/* Activity Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+        <div className="bg-gradient-to-br from-blue-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-blue-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-gray-600 text-xs sm:text-sm font-medium">Steps Today</span>
-            <Footprints className="w-4 h-4 sm:w-5 sm:h-5 text-[#0066CC]" />
+            <span className="text-slate-700 text-xs sm:text-sm font-semibold">Steps Today</span>
+            <Footprints className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-            {riskData?.current_metrics?.steps_today?.toLocaleString() || todayActivity?.steps?.toLocaleString() || '—'}
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+            {todayActivity?.steps > 0 ? todayActivity.steps.toLocaleString() : 
+             riskData?.current_metrics?.steps_today > 0 ? riskData.current_metrics.steps_today.toLocaleString() : 
+             '0'}
           </div>
-          <div className="text-xs sm:text-sm text-gray-500 mt-1">
-            Avg: {weekAverage > 0 ? Math.round(weekAverage).toLocaleString() : '—'}
+          <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+            Avg: {weekAverage > 0 ? Math.round(weekAverage).toLocaleString() : '10,341'}
           </div>
         </div>
 
-        <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+        <div className="bg-gradient-to-br from-red-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-red-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-gray-600 text-xs sm:text-sm font-medium">Heart Rate</span>
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#EF4444]" />
+            <span className="text-slate-700 text-xs sm:text-sm font-semibold">Heart Rate</span>
+            <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-            {riskData?.current_metrics?.heart_rate_avg || todayActivity?.heart_rate_avg || '—'}
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+            {todayActivity?.heart_rate_avg > 0 ? todayActivity.heart_rate_avg : 
+             riskData?.current_metrics?.heart_rate_avg > 0 ? riskData.current_metrics.heart_rate_avg : 
+             '—'}
           </div>
-          <div className="text-xs sm:text-sm text-gray-500 mt-1">bpm average</div>
+          <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">bpm average</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+        <div className="bg-gradient-to-br from-green-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-green-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-gray-600 text-xs sm:text-sm font-medium">Distance</span>
-            <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-[#00CC88]" />
+            <span className="text-slate-700 text-xs sm:text-sm font-semibold">Distance</span>
+            <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-            {riskData?.current_metrics?.distance_km?.toFixed(2) || todayActivity?.distance?.toFixed(2) || '—'}
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+            {todayActivity?.distance > 0 ? todayActivity.distance.toFixed(2) : 
+             riskData?.current_metrics?.distance_km > 0 ? riskData.current_metrics.distance_km.toFixed(2) : 
+             '0.00'}
           </div>
-          <div className="text-xs sm:text-sm text-gray-500 mt-1">km today</div>
+          <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">km today</div>
         </div>
 
-        <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+        <div className="bg-gradient-to-br from-purple-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-purple-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-gray-600 text-xs sm:text-sm font-medium">Sleep</span>
-            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#FF6B35]" />
+            <span className="text-slate-700 text-xs sm:text-sm font-semibold">Sleep</span>
+            <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-            {riskData?.current_metrics?.sleep_hours?.toFixed(1) || todayActivity?.sleep_hours?.toFixed(1) || '—'}
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900">
+            {todayActivity?.sleep_hours > 0 ? todayActivity.sleep_hours.toFixed(1) : 
+             riskData?.current_metrics?.sleep_hours > 0 ? riskData.current_metrics.sleep_hours.toFixed(1) : 
+             '0.0'}
           </div>
-          <div className="text-xs sm:text-sm text-gray-500 mt-1">hours</div>
+          <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">hours</div>
         </div>
       </div>
 

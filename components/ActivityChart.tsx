@@ -171,16 +171,17 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
       <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-md border border-gray-100">
         {chartType === 'steps' && (
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900">Daily Steps</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-slate-800">Daily Steps</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis tick={{ fontSize: 12, fill: '#475569' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#1e293b' }}
+                  labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                 />
-                <Legend wrapperStyle={{ fontSize: '14px' }} />
+                <Legend wrapperStyle={{ fontSize: '14px', color: '#475569' }} />
                 <Bar dataKey="steps" fill="url(#stepsGradient)" name="Steps" radius={[8, 8, 0, 0]} />
                 <defs>
                   <linearGradient id="stepsGradient" x1="0" y1="0" x2="0" y2="1">
@@ -195,23 +196,24 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
 
         {chartType === 'cadence' && (
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900">Cadence & Heart Rate Trends</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-slate-800">Cadence & Heart Rate Trends</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis yAxisId="left" tick={{ fontSize: 12 }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis yAxisId="left" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fill: '#475569' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#1e293b' }}
+                  labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                 />
-                <Legend wrapperStyle={{ fontSize: '14px' }} />
+                <Legend wrapperStyle={{ fontSize: '14px', color: '#475569' }} />
                 <Line yAxisId="left" type="monotone" dataKey="cadence" stroke="#00CC88" strokeWidth={3} name="Cadence (steps/min)" dot={{ r: 4 }} />
                 <Line yAxisId="right" type="monotone" dataKey="heartRate" stroke="#EF4444" strokeWidth={3} name="Heart Rate (bpm)" dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-4 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 <strong className="text-[#0066CC]">Optimal Cadence:</strong> 170-180 steps/minute reduces ground reaction forces and ACL strain.
                 Lower cadences increase injury risk.
               </p>
@@ -221,21 +223,22 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
 
         {chartType === 'asymmetry' && (
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900">Gait Symmetry Score</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-slate-800">Gait Symmetry Score</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis domain={[80, 100]} tick={{ fontSize: 12 }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis domain={[80, 100]} tick={{ fontSize: 12, fill: '#475569' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#1e293b' }}
+                  labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                 />
-                <Legend wrapperStyle={{ fontSize: '14px' }} />
+                <Legend wrapperStyle={{ fontSize: '14px', color: '#475569' }} />
                 <Line type="monotone" dataKey="asymmetry" stroke="#8b5cf6" strokeWidth={3} name="Symmetry %" dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-4 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 <strong className="text-purple-700">Symmetry Score:</strong> 100% = perfect left-right balance. Scores below 90% indicate significant
                 gait asymmetry, which is a major ACL injury risk factor. NCBI research shows asymmetry &gt;10% 
                 significantly increases injury risk.
@@ -246,23 +249,24 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
 
         {chartType === 'load' && (
           <div>
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900">Training Load & Impact Forces</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-slate-800">Training Load & Impact Forces</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis yAxisId="left" tick={{ fontSize: 12 }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis yAxisId="left" tick={{ fontSize: 12, fill: '#475569' }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fill: '#475569' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#1e293b' }}
+                  labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                 />
-                <Legend wrapperStyle={{ fontSize: '14px' }} />
+                <Legend wrapperStyle={{ fontSize: '14px', color: '#475569' }} />
                 <Line yAxisId="left" type="monotone" dataKey="load" stroke="#F59E0B" strokeWidth={3} name="Load Score" dot={{ r: 4 }} />
                 <Line yAxisId="right" type="monotone" dataKey="impact" stroke="#EF4444" strokeWidth={3} name="Peak Impact (G)" dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
             <div className="mt-4 p-3 sm:p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 <strong className="text-[#F59E0B]">Load Management:</strong> Sudden spikes in training load (&gt;20% increase) are associated with 
                 higher injury rates. Peak impact forces &gt;4G during landing increase ACL stress. Gradual progression 
                 and adequate recovery are essential.
