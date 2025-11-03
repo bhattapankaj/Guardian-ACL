@@ -116,7 +116,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
           value={data.date}
           max={new Date().toISOString().split('T')[0]} // Can't enter future dates
           onChange={(e) => handleChange('date', e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg"
+          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg text-gray-900"
         />
         <p className="text-xs text-gray-500 mt-2">Select the date for this activity data</p>
       </div>
@@ -140,7 +140,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.steps || ''}
               onChange={(e) => handleChange('steps', parseInt(e.target.value) || null)}
               placeholder="e.g., 10000"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">Total steps for the day (required)</p>
           </div>
@@ -157,7 +157,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.distance_km || ''}
               onChange={(e) => handleChange('distance_km', parseFloat(e.target.value) || null)}
               placeholder="e.g., 7.5"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">Total distance traveled</p>
           </div>
@@ -175,7 +175,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
                 value={data.calories || ''}
                 onChange={(e) => handleChange('calories', parseInt(e.target.value) || null)}
                 placeholder="e.g., 2500"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">Total calories burned</p>
@@ -192,7 +192,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.active_minutes || ''}
               onChange={(e) => handleChange('active_minutes', parseInt(e.target.value) || null)}
               placeholder="e.g., 60"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">Total active/exercise minutes</p>
           </div>
@@ -208,7 +208,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.peak_minutes || ''}
               onChange={(e) => handleChange('peak_minutes', parseInt(e.target.value) || null)}
               placeholder="e.g., 25"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">High-intensity / cardio zone minutes</p>
           </div>
@@ -235,7 +235,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.resting_heart_rate || ''}
               onChange={(e) => handleChange('resting_heart_rate', parseInt(e.target.value) || null)}
               placeholder="e.g., 65"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">Avg resting HR (important for fatigue)</p>
           </div>
@@ -255,7 +255,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
                 value={data.sleep_hours || ''}
                 onChange={(e) => handleChange('sleep_hours', parseFloat(e.target.value) || null)}
                 placeholder="e.g., 7.5"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">Total hours slept last night</p>
@@ -273,7 +273,7 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
               value={data.sleep_efficiency || ''}
               onChange={(e) => handleChange('sleep_efficiency', parseInt(e.target.value) || null)}
               placeholder="e.g., 85"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
             />
             <p className="text-xs text-gray-500 mt-1">Sleep quality percentage (if available)</p>
           </div>
