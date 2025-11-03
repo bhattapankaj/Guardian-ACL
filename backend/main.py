@@ -370,9 +370,87 @@ async def get_fitbit_activity(user_id: int, days: int = 7, db: Session = Depends
     return {"activities": activities}
 
 
+@app.post("/api/user/{user_id}/profile")
+async def update_user_profile(user_id: str, profile_data: dict, db: Session = Depends(get_db)):
+    """
+    Update user profile with manual health inputs for evidence-based risk calculation.
+    """
+    user = db.query(User).filter(User.fitbit_user_id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Update profile fields
+    if 'height_cm' in profile_data:
+        user.height_cm = profile_data['height_cm']
+    if 'sex' in profile_data:
+        user.sex = profile_data['sex']
+    if 'age' in profile_data:
+        user.age = profile_data['age']
+    if 'sport' in profile_data:
+        user.sport = profile_data['sport']
+    if 'limb_dominance' in profile_data:
+        user.limb_dominance = profile_data['limb_dominance']
+    if 'acl_history_flag' in profile_data:
+        user.acl_history_flag = profile_data['acl_history_flag']
+    if 'acl_injury_date' in profile_data:
+        user.acl_injury_date = profile_data['acl_injury_date']
+    if 'knee_pain_score' in profile_data:
+        user.knee_pain_score = profile_data['knee_pain_score']
+    if 'rehab_status' in profile_data:
+        user.rehab_status = profile_data['rehab_status']
+    if 'weight_kg' in profile_data:
+        user.weight_kg = profile_data['weight_kg']
+    
+    user.updated_at = datetime.utcnow()
+    
+    db.commit()
+    db.refresh(user)
+    
+    return {
+        "status": "success",
+        "message": "Profile updated successfully",
+        "profile": {
+            "height_cm": user.height_cm,
+            "sex": user.sex,
+            "age": user.age,
+            "sport": user.sport,
+            "limb_dominance": user.limb_dominance,
+            "acl_history_flag": user.acl_history_flag,
+            "knee_pain_score": user.knee_pain_score,
+            "rehab_status": user.rehab_status,
+            "weight_kg": user.weight_kg
+        }
+    }
+
+
+@app.get("/api/user/{user_id}/profile")
+async def get_user_profile_data(user_id: str, db: Session = Depends(get_db)):
+    """
+    Get user profile data.
+    """
+    user = db.query(User).filter(User.fitbit_user_id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "height_cm": user.height_cm,
+        "sex": user.sex,
+        "age": user.age,
+        "sport": user.sport,
+        "limb_dominance": user.limb_dominance,
+        "acl_history_flag": user.acl_history_flag,
+        "acl_injury_date": user.acl_injury_date.isoformat() if user.acl_injury_date else None,
+        "knee_pain_score": user.knee_pain_score,
+        "rehab_status": user.rehab_status,
+        "weight_kg": user.weight_kg
+    }
+
+
 @app.get("/user/{user_id}/profile")
 def get_user_profile(user_id: str):
-    """Get user profile information"""
+    """Get user profile information (legacy endpoint)"""
     if user_id not in users_db:
         raise HTTPException(status_code=404, detail="User not found")
     return users_db[user_id]
