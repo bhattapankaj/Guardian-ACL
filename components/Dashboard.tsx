@@ -161,9 +161,34 @@ export default function Dashboard({ userId }: DashboardProps) {
     );
   }
 
-  const todayActivity = activityData[0];
-  const weekAverage = activityData.length > 0 
-    ? activityData.reduce((sum, day) => sum + day.steps, 0) / activityData.length 
+  // Robust selection for "today" metrics
+  // 1) Try to match by LOCAL calendar day (not UTC) to avoid off-by-one
+  // 2) If no exact match, use the most recent non-zero day
+  // 3) Else, fall back to the latest day available
+  const localTodayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
+  const normalizeDate = (d?: string) => (d ? d.slice(0, 10) : '');
+
+  // Ensure a consistent recent-first ordering
+  const sortedActivities = [...activityData].sort((a, b) =>
+    normalizeDate(a.date) < normalizeDate(b.date) ? 1 : -1
+  );
+
+  const todayExact = sortedActivities.find(
+    (d) => normalizeDate(d.date) === localTodayStr
+  );
+
+  const recentNonZero = sortedActivities.find(
+    (d) =>
+      (d.steps ?? 0) > 0 ||
+      (d.distance ?? 0) > 0 ||
+      (d.sleep_hours ?? 0) > 0 ||
+      (d.heart_rate_avg ?? 0) > 0
+  );
+
+  const todayActivity = todayExact || recentNonZero || sortedActivities[0];
+
+  const weekAverage = activityData.length > 0
+    ? activityData.reduce((sum, day) => sum + (day.steps || 0), 0) / activityData.length
     : 0;
 
   const getRiskColor = (color: string) => {
@@ -285,7 +310,12 @@ export default function Dashboard({ userId }: DashboardProps) {
              '0'}
           </div>
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-            Avg: {weekAverage > 0 ? Math.round(weekAverage).toLocaleString() : '10,341'}
+            {(() => {
+              const backendAvg = riskData?.weekly_aggregates?.avg_steps_day ?? 0;
+              const value = backendAvg > 0 ? backendAvg : weekAverage;
+              const label = value > 0 ? Math.round(value).toLocaleString() : '10,341';
+              return `Avg: ${label}`;
+            })()}
           </div>
         </div>
 
@@ -538,7 +568,9 @@ export default function Dashboard({ userId }: DashboardProps) {
       <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">
         <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900">7-Day Activity Trend</h3>
         <div className="space-y-2 sm:space-y-3">
-          {activityData.map((day, index) => (
+          {[...activityData]
+            .sort((a, b) => (new Date(a.date) < new Date(b.date) ? 1 : -1))
+            .map((day) => (
             <div key={day.date} className="flex items-center space-x-3 sm:space-x-4">
               <div className="text-xs sm:text-sm font-medium text-gray-600 w-16 sm:w-24">
                 {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
