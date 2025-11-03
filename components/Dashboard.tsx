@@ -168,10 +168,10 @@ export default function Dashboard({ userId }: DashboardProps) {
 
   const getRiskColor = (color: string) => {
     switch (color) {
-      case 'green': return 'text-[#10B981] bg-green-50 border-green-200';
-      case 'yellow': return 'text-[#F59E0B] bg-yellow-50 border-yellow-200';
-      case 'red': return 'text-[#EF4444] bg-red-50 border-red-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'green': return 'text-emerald-900 bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-300';
+      case 'yellow': return 'text-amber-900 bg-gradient-to-br from-amber-50 to-orange-100 border-amber-300';
+      case 'red': return 'text-rose-900 bg-gradient-to-br from-rose-50 to-red-100 border-rose-300';
+      default: return 'text-slate-700 bg-gradient-to-br from-slate-50 to-gray-100 border-slate-300';
     }
   };
 
@@ -193,9 +193,9 @@ export default function Dashboard({ userId }: DashboardProps) {
             {!riskLoading && riskData && (
               <div className="mt-2 flex items-center gap-2">
                 <span className={`px-2 py-1 rounded-md text-xs font-semibold uppercase ${
-                  riskData.confidence === 'high' ? 'bg-green-200 text-green-900' :
-                  riskData.confidence === 'medium' ? 'bg-yellow-200 text-yellow-900' :
-                  'bg-red-200 text-red-900'
+                  riskData.confidence === 'high' ? 'bg-emerald-200 text-emerald-900' :
+                  riskData.confidence === 'medium' ? 'bg-amber-200 text-amber-900' :
+                  'bg-rose-200 text-rose-900'
                 }`}>
                   {riskData.confidence} Confidence
                 </span>
@@ -350,7 +350,7 @@ export default function Dashboard({ userId }: DashboardProps) {
               <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                 <div
                   className={`h-2 sm:h-2.5 rounded-full transition-all ${
-                    value < 30 ? 'bg-[#10B981]' : value < 60 ? 'bg-[#F59E0B]' : 'bg-[#EF4444]'
+                    value < 30 ? 'bg-emerald-500' : value < 60 ? 'bg-amber-500' : 'bg-rose-500'
                   }`}
                   style={{ width: `${value}%` }}
                 ></div>
