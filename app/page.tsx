@@ -8,6 +8,7 @@ import Dashboard from '@/components/Dashboard';
 import RiskAssessment from '@/components/RiskAssessment';
 import Recommendations from '@/components/Recommendations';
 import ActivityChart from '@/components/ActivityChart';
+import ManualDataEntry from '@/components/ManualDataEntry';
 
 // Use environment variable for API URL (falls back to localhost for development)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -31,11 +32,24 @@ export default function Home() {
       setLastSync(savedLastSync);
     }
 
-    // Check URL params for OAuth callback
+    // Check URL params for OAuth callback OR manual-entry tab
     const params = new URLSearchParams(window.location.search);
     const connected = params.get('connected');
     const user_id = params.get('user_id');
+    const tab = params.get('tab');
     const error = params.get('error');
+
+    // Handle manual entry tab selection
+    if (tab === 'manual-entry') {
+      if (!savedUserId) {
+        // Create a guest user for manual entry
+        const guestUserId = `manual_${Date.now()}`;
+        setUserId(guestUserId);
+        setIsConnected(true);
+        localStorage.setItem('acl_guardian_user_id', guestUserId);
+      }
+      setActiveTab('manual-entry');
+    }
 
     if (connected === 'true' && user_id) {
       setUserId(user_id);
@@ -257,6 +271,24 @@ export default function Home() {
                   Garmin
                 </button>
               </div>
+
+              {/* Manual Data Entry Button */}
+              <button
+                onClick={() => {
+                  // Navigate to manual data entry page
+                  window.location.href = `/dashboard?userId=${userId}&tab=manual-entry`;
+                }}
+                className="w-full max-w-md inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-lg font-semibold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-2 border-purple-400"
+              >
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Manual Data Entry
+                <span className="ml-2 text-sm opacity-80">(Other Wearables)</span>
+              </button>
+              <p className="text-sm text-gray-500 text-center mt-2 max-w-md mx-auto">
+                Use this if you have Whoop, Polar, or other wearables
+              </p>
             </div>
             
             <p className="text-sm text-gray-500 mt-6 px-4">
@@ -379,6 +411,7 @@ export default function Home() {
         {activeTab === 'risk' && userId && <RiskAssessment userId={userId} />}
         {activeTab === 'recommendations' && userId && <Recommendations userId={userId} />}
         {activeTab === 'activity' && userId && <ActivityChart userId={userId} />}
+        {activeTab === 'manual-entry' && userId && <ManualDataEntry userId={userId} />}
       </div>
     </div>
   );

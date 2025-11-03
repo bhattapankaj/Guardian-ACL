@@ -2,15 +2,257 @@
 > acl-guardian@0.1.0 dev
 > next dev --webpack
 
- ⚠ Port 3000 is in use by process 53631, using available port 3001 instead.
    ▲ Next.js 16.0.1 (webpack)
-   - Local:        http://localhost:3001
-   - Network:      http://10.0.0.78:3001
+   - Local:        http://localhost:3000
+   - Network:      http://10.1.10.210:3000
    - Environments: .env.local
 
  ✓ Starting...
- ⨯ Unable to acquire lock at /Users/panka GET / 200 in 79ms (compile: 28ms, render: 50ms)
- GET / 200 in 20ms (compile: 3ms, render: 18ms)
-   Reload env: .env.local
- GET / 200 in 170ms (compile: 149ms, render: 20ms)
- GET / 200 in 99ms (compile: 76ms, render: 22ms)
+ ✓ Ready in 1334ms
+ GET / 200 in 3.1s (compile: 2.9s, render: 186ms)
+ GET / 200 in 59ms (compile: 9ms, render: 50ms)
+ GET / 200 in 72ms (compile: 17ms, render: 54ms)
+ GET / 200 in 51ms (compile: 7ms, render: 43ms)
+ GET / 200 in 241ms (compile: 148ms, render: 94ms)
+ GET / 200 in 243ms (compile: 144ms, render: 99ms)
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ ⨯ ./components/Recommendations.tsx
+Error:   [31mx[0m Unterminated string constant
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:4:1]
+ [2m1[0m | 'use client';
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+   : [35;1m                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+ [2m5[0m |           ML-Powered Prevention Plan
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+  [31mx[0m Expected ';', '}' or <eof>
+   ,-[[36;1;4m/Users/pankaj/Desktop/EnZury/acl-guardian/components/Recommendations.tsx[0m:5:1]
+ [2m2[0m | 
+ [2m3[0m | import { useState, useEffect } from 'react';
+ [2m4[0m | import axios from 'a        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+ [2m5[0m |           ML-Powered Prevention Plan
+   : [35;1m          ^^^^^|^^^^[0m[33;1m ^^^^^^^^^^[0m
+   :                [35;1m`-- [35;1mThis is the expression part of an expression statement[0m[0m
+ [2m6[0m |         </h1>s';
+ [2m7[0m | import { Dumbbell, Heart, Activity, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/Recommendations.tsx
+./app/page.tsx
+ GET / 500 in 1459ms (compile: 1322ms, render: 137ms)
+ GET / 500 in 599ms (compile: 469ms, render: 131ms)
+ GET / 500 in 563ms (compile: 433ms, render: 130ms)
+ GET / 500 in 10ms (compile: 3ms, render: 7ms)
+ GET / 500 in 29ms (compile: 7ms, render: 22ms)
+ ○ Compiling /_error ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 60ms (compile: 11ms, render: 49ms)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 926ms (compile: 416ms, render: 510ms)
+ GET / 200 in 914ms (compile: 3ms, render: 910ms)
+ GET / 200 in 118ms (compile: 89ms, render: 28ms)
+ GET / 200 in 16ms (compile: 6ms, render: 9ms)
+ GET / 200 in 130ms (compile: 85ms, render: 45ms)
+ GET / 200 in 135ms (compile: 86ms, render: 48ms)
+ GET / 200 in 122ms (compile: 80ms, render: 42ms)
+ GET / 200 in 127ms (compile: 83ms, render: 45ms)
+ GET / 200 in 132ms (compile: 87ms, render: 45ms)
+ GET / 200 in 136ms (compile: 89ms, render: 47ms)
+ GET / 200 in 221ms (compile: 110ms, render: 111ms)
+ GET / 200 in 228ms (compile: 113ms, render: 115ms)
+ GET / 200 in 108ms (compile: 79ms, render: 29ms)
+ GET / 200 in 28ms (compile: 11ms, render: 16ms)
+ GET / 200 in 214ms (compile: 127ms, render: 87ms)
+ GET / 200 in 224ms (compile: 133ms, render: 91ms)
+ GET / 200 in 156ms (compile: 115ms, render: 42ms)
+ GET / 200 in 163ms (compile: 117ms, render: 47ms)
+ GET / 200 in 350ms (compile: 295ms, render: 55ms)
+ GET / 200 in 32ms (compile: 11ms, render: 22ms)
+ GET / 200 in 68ms (compile: 56ms, render: 13ms)
+ GET / 200 in 254ms (compile: 218ms, render: 36ms)

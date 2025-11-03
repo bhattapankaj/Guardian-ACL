@@ -687,6 +687,106 @@ def get_ncbi_research_summary():
         "source": "Based on NCBI research literature"
     }
 
+# ============================================
+# MANUAL DATA ENTRY ENDPOINT
+# ============================================
+
+class ManualActivityData(BaseModel):
+    date: str  # YYYY-MM-DD format
+    steps: Optional[int] = None
+    distance_km: Optional[float] = None
+    calories: Optional[int] = None
+    active_minutes: Optional[int] = None
+    peak_minutes: Optional[int] = None
+    resting_heart_rate: Optional[int] = None
+    sleep_hours: Optional[float] = None
+    sleep_efficiency: Optional[int] = None
+
+@app.post("/api/manual-data/{user_id}")
+def save_manual_activity_data(user_id: str, data: ManualActivityData, db: Session = Depends(get_db)):
+    """
+    Save manually entered activity data from any wearable device.
+    This allows athletes using Whoop, Polar, or other devices to input their data.
+    """
+    try:
+        # Verify user exists
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Parse date
+        activity_date = datetime.strptime(data.date, "%Y-%m-%d").date()
+        
+        # Check if data already exists for this date
+        existing = db.query(ActivityData).filter(
+            ActivityData.user_id == user_id,
+            ActivityData.date == activity_date
+        ).first()
+        
+        if existing:
+            # Update existing record
+            if data.steps is not None:
+                existing.steps = data.steps
+            if data.distance_km is not None:
+                existing.distance = data.distance_km
+            if data.calories is not None:
+                existing.calories = data.calories
+            if data.active_minutes is not None:
+                existing.active_minutes = data.active_minutes
+            if data.peak_minutes is not None:
+                existing.very_active_minutes = data.peak_minutes  # Map to very_active_minutes
+            if data.resting_heart_rate is not None:
+                existing.resting_heart_rate = data.resting_heart_rate
+            if data.sleep_hours is not None:
+                existing.sleep_duration_minutes = int(data.sleep_hours * 60)
+            if data.sleep_efficiency is not None:
+                existing.sleep_efficiency = data.sleep_efficiency
+            
+            db.commit()
+            return {
+                "status": "success",
+                "message": f"Updated activity data for {data.date}",
+                "data_updated": True
+            }
+        else:
+            # Create new record
+            new_activity = ActivityData(
+                user_id=user_id,
+                date=activity_date,
+                steps=data.steps or 0,
+                distance=data.distance_km or 0.0,
+                calories=data.calories or 0,
+                active_minutes=data.active_minutes or 0,
+                very_active_minutes=data.peak_minutes or 0,
+                resting_heart_rate=data.resting_heart_rate,
+                sleep_duration_minutes=int(data.sleep_hours * 60) if data.sleep_hours else 0,
+                sleep_efficiency=data.sleep_efficiency,
+                # Default values for other fields
+                sedentary_minutes=0,
+                lightly_active_minutes=0,
+                fairly_active_minutes=0,
+                deep_sleep_minutes=0,
+                light_sleep_minutes=0,
+                rem_sleep_minutes=0
+            )
+            
+            db.add(new_activity)
+            db.commit()
+            db.refresh(new_activity)
+            
+            return {
+                "status": "success",
+                "message": f"Saved activity data for {data.date}",
+                "data_created": True,
+                "activity_id": new_activity.id
+            }
+    
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid date format. Use YYYY-MM-DD: {str(e)}")
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to save manual data: {str(e)}")
+
 # Demo data endpoint
 @app.post("/demo/generate-sample-data")
 def generate_sample_data():
