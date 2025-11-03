@@ -353,11 +353,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#FAFBFC]">
       {/* Header */}
-      <header className="bg-white/95 border-b border-gray-200 sticky top-0 z-50 backdrop-blur-sm">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#0B63CE] rounded-xl flex items-center justify-center shadow-md p-2">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#0066CC] to-[#0052A3] rounded-xl flex items-center justify-center shadow-md p-2">
                 <Image 
                   src="/logo.png" 
                   alt="ACL Guardian Logo" 
@@ -367,7 +367,7 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">ACL Guardian</h1>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">ACL Guardian</h1>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -385,7 +385,7 @@ export default function Home() {
               <button
                 onClick={() => handleSync()}
                 disabled={syncing}
-                className="px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
+                className="px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 {syncing ? (
                   <>
@@ -411,7 +411,7 @@ export default function Home() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white/95 border-b border-gray-200 sticky top-[60px] sm:top-[68px] z-40 backdrop-blur-sm">
+      <div className="bg-white border-b border-gray-200 sticky top-[60px] sm:top-[68px] z-40 backdrop-blur-sm bg-white/95">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
             {[
@@ -427,8 +427,8 @@ export default function Home() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 sm:px-6 py-3 font-medium text-xs sm:text-sm transition-all border-b-2 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'border-blue-600 text-blue-700'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                    ? 'border-[#0066CC] text-[#0066CC] bg-blue-50/50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />

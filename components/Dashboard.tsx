@@ -192,23 +192,18 @@ export default function Dashboard({ userId }: DashboardProps) {
     : 0;
 
   const getRiskColor = (color: string) => {
-    // Professional neutral surface with subtle colored border accents
     switch (color) {
-      case 'green':
-        return 'card-surface border-emerald-200';
-      case 'yellow':
-        return 'card-surface border-amber-200';
-      case 'red':
-        return 'card-surface border-rose-200';
-      default:
-        return 'card-surface';
+      case 'green': return 'text-emerald-900 bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-300';
+      case 'yellow': return 'text-amber-900 bg-gradient-to-br from-amber-50 to-orange-100 border-amber-300';
+      case 'red': return 'text-rose-900 bg-gradient-to-br from-rose-50 to-red-100 border-rose-300';
+      default: return 'text-slate-700 bg-gradient-to-br from-slate-50 to-gray-100 border-slate-300';
     }
   };
 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Risk Score Card - EVIDENCE-BASED CLINICAL ASSESSMENT */}
-  <div className={`p-4 sm:p-6 lg:p-8 rounded-2xl ${getRiskColor(riskData?.risk_color || 'gray')}`}>
+      <div className={`p-4 sm:p-6 lg:p-8 rounded-2xl border-2 shadow-md ${getRiskColor(riskData?.risk_color || 'gray')}`}>
         <div className="flex flex-col sm:flex-row items-start justify-between mb-4 sm:mb-6 gap-4">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
@@ -219,14 +214,6 @@ export default function Dashboard({ userId }: DashboardProps) {
                riskData ? `Analyzed ${riskData.data_days} days of your Fitbit data` : 
                'Risk calculation unavailable'}
             </p>
-            <div className="mt-2 flex items-center gap-2 text-[11px] text-gray-500">
-              {todayActivity?.date && (
-                <span className="px-2 py-0.5 rounded-full bg-gray-50 border border-gray-200">Updated {new Date(todayActivity.date).toLocaleDateString()}</span>
-              )}
-              {riskData?.metadata?.sport && (
-                <span className="px-2 py-0.5 rounded-full bg-gray-50 border border-gray-200 capitalize">Sport: {riskData.metadata.sport}</span>
-              )}
-            </div>
             {/* Confidence Badge */}
             {!riskLoading && riskData && (
               <div className="mt-2 flex items-center gap-2">
@@ -312,7 +299,7 @@ export default function Dashboard({ userId }: DashboardProps) {
 
       {/* Activity Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all border-l-4 border-blue-500">
+        <div className="bg-gradient-to-br from-blue-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-blue-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <span className="text-slate-700 text-xs sm:text-sm font-semibold">Steps Today</span>
             <Footprints className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
@@ -332,7 +319,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           </div>
         </div>
 
-  <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all border-l-4 border-rose-500">
+        <div className="bg-gradient-to-br from-red-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-red-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <span className="text-slate-700 text-xs sm:text-sm font-semibold">Heart Rate</span>
             <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
@@ -345,7 +332,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">bpm average</div>
         </div>
 
-  <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all border-l-4 border-emerald-500">
+        <div className="bg-gradient-to-br from-green-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-green-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <span className="text-slate-700 text-xs sm:text-sm font-semibold">Distance</span>
             <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -358,7 +345,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">km today</div>
         </div>
 
-  <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-all border-l-4 border-purple-500">
+        <div className="bg-gradient-to-br from-purple-50 to-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all border-2 border-purple-100">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <span className="text-slate-700 text-xs sm:text-sm font-semibold">Sleep</span>
             <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
@@ -373,7 +360,7 @@ export default function Dashboard({ userId }: DashboardProps) {
       </div>
 
       {/* Risk Factors Breakdown - REAL ML COMPONENTS */}
-  <div className="card-surface bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl">
+      <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">
         <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900">
           ML Risk Factor Breakdown
         </h3>
@@ -408,7 +395,7 @@ export default function Dashboard({ userId }: DashboardProps) {
         <>
           {/* Calories & Active Minutes */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-shadow">
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <span className="text-gray-600 text-xs sm:text-sm font-medium">Calories Burned</span>
                 <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
@@ -419,7 +406,7 @@ export default function Dashboard({ userId }: DashboardProps) {
               <div className="text-xs sm:text-sm text-gray-500 mt-1">kcal today</div>
             </div>
 
-            <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-shadow">
+            <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <span className="text-gray-600 text-xs sm:text-sm font-medium">Active Minutes</span>
                 <Timer className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
@@ -431,7 +418,7 @@ export default function Dashboard({ userId }: DashboardProps) {
             </div>
 
             {todayActivity.very_active_minutes !== undefined && (
-              <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-shadow">
+              <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
                 <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <span className="text-gray-600 text-xs sm:text-sm font-medium">Very Active</span>
                   <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
@@ -444,7 +431,7 @@ export default function Dashboard({ userId }: DashboardProps) {
             )}
 
             {todayActivity.cadence !== undefined && todayActivity.cadence > 0 && (
-              <div className="card-surface p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:shadow-lg transition-shadow">
+              <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
                 <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <span className="text-gray-600 text-xs sm:text-sm font-medium">Cadence</span>
                   <Footprints className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
@@ -459,9 +446,9 @@ export default function Dashboard({ userId }: DashboardProps) {
 
           {/* Sleep Details (if available) */}
           {(todayActivity.sleep_hours && todayActivity.sleep_hours > 0) && (
-            <div className="card-surface p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl">
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-indigo-200">
               <div className="flex items-center mb-4">
-                <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 mr-2" />
+                <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 mr-2" />
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900">Sleep Analysis</h3>
               </div>
               
@@ -507,7 +494,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           {(todayActivity.lightly_active_minutes !== undefined || 
             todayActivity.fairly_active_minutes !== undefined || 
             todayActivity.very_active_minutes !== undefined) && (
-            <div className="card-surface p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl">
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">
               <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900">
                 Activity Intensity Breakdown
               </h3>
@@ -578,7 +565,7 @@ export default function Dashboard({ userId }: DashboardProps) {
       )}
 
       {/* Weekly Activity Trend */}
-  <div className="card-surface p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl">
+      <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-md border border-gray-100">
         <h3 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-gray-900">7-Day Activity Trend</h3>
         <div className="space-y-2 sm:space-y-3">
           {[...activityData]
