@@ -28,6 +28,17 @@ export default function Home() {
     const savedUserId = localStorage.getItem('acl_guardian_user_id');
     const savedLastSync = localStorage.getItem('acl_guardian_last_sync');
     
+    // MIGRATION FIX: Check if saved user ID is old format (just a number)
+    // Old IDs were integers like "5", new IDs are Fitbit IDs or "manual_xxx"
+    if (savedUserId && /^\d+$/.test(savedUserId)) {
+      console.warn('⚠️ Detected old user ID format. Clearing to force reconnection.');
+      localStorage.removeItem('acl_guardian_user_id');
+      localStorage.removeItem('acl_guardian_last_sync');
+      alert('Please reconnect your Fitbit to sync your data.');
+      window.location.reload();
+      return;
+    }
+    
     if (savedUserId) {
       setUserId(savedUserId);
       setIsConnected(true);
