@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { Activity, Heart, TrendingUp, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
+import { Activity, Heart, TrendingUp, AlertTriangle, CheckCircle, ArrowRight, Edit } from 'lucide-react';
 import Dashboard from '@/components/Dashboard';
 import RiskAssessment from '@/components/RiskAssessment';
 import Recommendations from '@/components/Recommendations';
@@ -275,8 +275,16 @@ export default function Home() {
               {/* Manual Data Entry Button */}
               <button
                 onClick={() => {
-                  // Navigate to manual data entry page
-                  window.location.href = `/dashboard?userId=${userId}&tab=manual-entry`;
+                  // Create a guest user ID for manual entry if not already connected
+                  let currentUserId = userId;
+                  if (!currentUserId) {
+                    currentUserId = `manual_${Date.now()}`;
+                    setUserId(currentUserId);
+                    setIsConnected(true);
+                    localStorage.setItem('acl_guardian_user_id', currentUserId);
+                  }
+                  // Switch to manual entry tab
+                  setActiveTab('manual-entry');
                 }}
                 className="w-full max-w-md inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-lg font-semibold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-2 border-purple-400"
               >
@@ -385,7 +393,8 @@ export default function Home() {
               { id: 'dashboard', label: 'Dashboard', icon: Activity },
               { id: 'risk', label: 'Risk Assessment', icon: AlertTriangle },
               { id: 'recommendations', label: 'Prevention', icon: CheckCircle },
-              { id: 'activity', label: 'Trends', icon: TrendingUp }
+              { id: 'activity', label: 'Trends', icon: TrendingUp },
+              { id: 'manual-entry', label: 'Manual Entry', icon: Edit }
             ].map((tab) => (
               <button
                 key={tab.id}
