@@ -30,7 +30,7 @@ interface ActivityData {
   load_score?: number;
 }
 
-// ML Risk Assessment Response from /api/risk/realtime
+// Evidence-Based Risk Assessment Response from /api/risk/realtime
 interface MLRiskData {
   status: string;
   user_id: string;
@@ -39,12 +39,23 @@ interface MLRiskData {
   risk_score: number;
   risk_level: string;
   risk_color: string;
+  confidence: string;
+  missing_data: string[];
   risk_components: {
-    asymmetry: number;
-    cadence: number;
     load: number;
     fatigue: number;
-    consistency: number;
+    intensity: number;
+    bmi: number;
+    history: number;
+    pain: number;
+  };
+  component_details: {
+    [key: string]: {
+      index: number;
+      weight: number;
+      contribution: number;
+      description: string;
+    };
   };
   current_metrics: {
     steps_today: number;
@@ -53,12 +64,12 @@ interface MLRiskData {
     distance_km: number;
   };
   recommendations: string[];
-  analysis_details: {
-    step_asymmetry: number;
-    cadence_variance: number;
-    load_spike: number;
-    fatigue_score: number;
-    consistency: number;
+  metadata: any;
+  weekly_aggregates: {
+    avg_steps_day: number;
+    avg_peak_minutes_day: number;
+    avg_resting_hr: number;
+    avg_sleep_hours: number;
   };
 }
 
@@ -157,18 +168,35 @@ export default function Dashboard({ userId }: DashboardProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Risk Score Card - REAL ML PREDICTION */}
+      {/* Risk Score Card - EVIDENCE-BASED CLINICAL ASSESSMENT */}
       <div className={`p-4 sm:p-6 lg:p-8 rounded-2xl border-2 shadow-md ${getRiskColor(riskData?.risk_color || 'gray')}`}>
         <div className="flex flex-col sm:flex-row items-start justify-between mb-4 sm:mb-6 gap-4">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
-              Real-Time ML Risk Score
+              Evidence-Based ACL Risk Score
             </h2>
             <p className="text-xs sm:text-sm opacity-75">
-              {riskLoading ? 'Analyzing your Fitbit data with ML model...' : 
+              {riskLoading ? 'Analyzing your Fitbit data with clinical formula...' : 
                riskData ? `Analyzed ${riskData.data_days} days of your Fitbit data` : 
-               'ML risk calculation unavailable'}
+               'Risk calculation unavailable'}
             </p>
+            {/* Confidence Badge */}
+            {!riskLoading && riskData && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className={`px-2 py-1 rounded-md text-xs font-semibold uppercase ${
+                  riskData.confidence === 'high' ? 'bg-green-200 text-green-900' :
+                  riskData.confidence === 'medium' ? 'bg-yellow-200 text-yellow-900' :
+                  'bg-red-200 text-red-900'
+                }`}>
+                  {riskData.confidence} Confidence
+                </span>
+                {riskData.missing_data && riskData.missing_data.length > 0 && (
+                  <span className="text-xs opacity-60">
+                    Missing: {riskData.missing_data.join(', ')}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           {riskLoading ? (
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
@@ -199,11 +227,40 @@ export default function Dashboard({ userId }: DashboardProps) {
           </div>
           {!riskLoading && riskData && riskData.recommendations.length > 0 && (
             <div className="mt-3 p-3 bg-white/30 rounded-lg">
-              <p className="text-sm font-medium">💡 Top Recommendation:</p>
+              <p className="text-sm font-medium">Top Recommendation:</p>
               <p className="text-xs mt-1">{riskData.recommendations[0]}</p>
             </div>
           )}
         </div>
+
+        {/* Clinical Component Breakdown */}
+        {!riskLoading && riskData && riskData.component_details && (
+          <div className="mt-6 p-4 bg-white/40 rounded-xl border border-white/60">
+            <h3 className="text-sm font-bold mb-3 uppercase tracking-wide">Clinical Risk Factors</h3>
+            <div className="space-y-2">
+              {Object.entries(riskData.component_details).map(([key, component]: [string, any]) => (
+                <div key={key} className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="font-semibold capitalize">{key} ({(component.weight * 100).toFixed(0)}%)</span>
+                      <span className="opacity-75">{component.description}</span>
+                    </div>
+                    <div className="w-full bg-white/50 rounded-full h-2">
+                      <div
+                        className="bg-current rounded-full h-2 transition-all"
+                        style={{ width: `${component.index * 100}%` }}
+                        title={`Index: ${component.index.toFixed(2)}, Contribution: ${(component.contribution * 100).toFixed(1)}%`}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs mt-3 opacity-60">
+              Risk formula: Load(30%) + Fatigue(25%) + Intensity(15%) + BMI(10%) + History(10%) + Pain(5%)
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Activity Stats Grid */}

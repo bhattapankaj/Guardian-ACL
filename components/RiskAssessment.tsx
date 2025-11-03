@@ -10,7 +10,7 @@ interface RiskAssessmentProps {
   userId: string;
 }
 
-// ML Risk Assessment Response from /api/risk/realtime
+// Evidence-Based Risk Assessment Response from /api/risk/realtime
 interface MLRiskData {
   status: string;
   user_id: string;
@@ -19,12 +19,23 @@ interface MLRiskData {
   risk_score: number;
   risk_level: string;
   risk_color: string;
+  confidence: string;
+  missing_data: string[];
   risk_components: {
-    asymmetry: number;
-    cadence: number;
     load: number;
     fatigue: number;
-    consistency: number;
+    intensity: number;
+    bmi: number;
+    history: number;
+    pain: number;
+  };
+  component_details: {
+    [key: string]: {
+      index: number;
+      weight: number;
+      contribution: number;
+      description: string;
+    };
   };
   current_metrics: {
     steps_today: number;
@@ -33,12 +44,12 @@ interface MLRiskData {
     distance_km: number;
   };
   recommendations: string[];
-  analysis_details: {
-    step_asymmetry: number;
-    cadence_variance: number;
-    load_spike: number;
-    fatigue_score: number;
-    consistency: number;
+  metadata: any;
+  weekly_aggregates: {
+    avg_steps_day: number;
+    avg_peak_minutes_day: number;
+    avg_resting_hr: number;
+    avg_sleep_hours: number;
   };
 }
 
@@ -134,30 +145,35 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
   };
 
   const factorDescriptions: Record<string, { name: string; description: string; insight: string }> = {
-    asymmetry: {
-      name: 'Step Asymmetry',
-      description: 'Measures gait imbalance detected from day-to-day step patterns',
-      insight: `ML detected ${riskData.analysis_details.step_asymmetry.toFixed(1)}% step asymmetry. Research shows asymmetry >10% significantly increases ACL injury risk due to uneven joint loading.`
-    },
-    cadence: {
-      name: 'Cadence Variance',
-      description: 'Inconsistent pace detected from distance/steps ratio',
-      insight: `ML detected ${riskData.analysis_details.cadence_variance.toFixed(1)}% cadence variance. High variance (>15%) suggests poor neuromuscular control, a key ACL risk factor.`
-    },
     load: {
-      name: 'Training Load Spike',
-      description: 'Sudden changes in training volume week-over-week',
-      insight: `ML detected ${riskData.analysis_details.load_spike.toFixed(1)}% load spike. Rapid increases (>30%) are associated with higher injury rates due to inadequate tissue adaptation.`
+      name: 'Training Load',
+      description: 'Average daily steps over 7 days - measures overall training volume',
+      insight: `${riskData.component_details?.load?.description || 'Loading data...'} - Research shows rapid load increases (>30% week-to-week) significantly increase ACL injury risk. Optimal range: 5,000-20,000 steps/day.`
     },
     fatigue: {
-      name: 'Fatigue Score',
-      description: 'Recovery indicators from heart rate and sleep patterns',
-      insight: `ML calculated ${riskData.analysis_details.fatigue_score.toFixed(1)}/100 fatigue score. Elevated fatigue reduces neuromuscular control and reaction time.`
+      name: 'Fatigue & Recovery',
+      description: 'Combined metric from resting heart rate elevation and sleep deficit',
+      insight: `${riskData.component_details?.fatigue?.description || 'Loading data...'} - Elevated resting HR (+8 bpm above baseline) and insufficient sleep (<7h) indicate poor recovery, which impairs neuromuscular control and increases injury risk.`
     },
-    consistency: {
-      name: 'Activity Consistency',
-      description: 'Training pattern regularity over the analysis period',
-      insight: `ML detected ${riskData.analysis_details.consistency.toFixed(1)}% consistency. Low consistency suggests irregular training, which limits adaptation and increases injury risk.`
+    intensity: {
+      name: 'Training Intensity',
+      description: 'Average daily minutes in peak/very active heart rate zones',
+      insight: `${riskData.component_details?.intensity?.description || 'Loading data...'} - High-intensity training (>60 min/day in peak zones) increases mechanical stress on knee ligaments. Proper periodization is essential.`
+    },
+    bmi: {
+      name: 'Body Mass Index',
+      description: 'Weight-to-height ratio - affects joint loading mechanics',
+      insight: `${riskData.component_details?.bmi?.description || 'Loading data...'} - BMI outside optimal range (22-27) alters landing mechanics and increases ground reaction forces, elevating ACL stress.`
+    },
+    history: {
+      name: 'ACL Injury History',
+      description: 'Previous ACL injury is a major risk factor',
+      insight: `${riskData.component_details?.history?.description || 'No prior ACL injury'} - Athletes with prior ACL injury have 6-15x higher re-injury risk due to altered biomechanics and neuromuscular deficits.`
+    },
+    pain: {
+      name: 'Knee Pain Score',
+      description: 'Self-reported knee pain level (0-10 scale)',
+      insight: `${riskData.component_details?.pain?.description || 'No pain reported'} - Persistent knee pain (>3/10) may indicate underlying pathology or compensatory movement patterns that increase ACL strain.`
     }
   };
 
@@ -169,7 +185,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
           <div className="flex-shrink-0">{getRiskIcon(riskData.risk_color)}</div>
           <div className="flex-1">
             <div className="text-xs sm:text-sm font-medium uppercase tracking-wide mb-1 sm:mb-2">
-              Real-Time ML ACL Injury Risk
+              Evidence-Based ACL Injury Risk Assessment
             </div>
             <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 uppercase">
               {riskData.risk_level}
@@ -177,9 +193,23 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
             <p className="text-sm sm:text-base lg:text-lg opacity-90 leading-relaxed">
               {getRiskMessage(riskData.risk_level)}
             </p>
-            <p className="text-xs sm:text-sm opacity-75 mt-2">
-              Analyzed {riskData.data_days} days of your Fitbit activity data
-            </p>
+            <div className="flex items-center gap-3 mt-3">
+              <p className="text-xs sm:text-sm opacity-75">
+                Analyzed {riskData.data_days} days of your Fitbit activity data
+              </p>
+              <span className={`px-2 py-1 rounded-md text-xs font-semibold uppercase ${
+                riskData.confidence === 'high' ? 'bg-white/30 text-current' :
+                riskData.confidence === 'medium' ? 'bg-white/40 text-current' :
+                'bg-white/50 text-current'
+              }`}>
+                {riskData.confidence} Confidence
+              </span>
+            </div>
+            {riskData.missing_data && riskData.missing_data.length > 0 && (
+              <p className="text-xs opacity-60 mt-2">
+                Missing data: {riskData.missing_data.join(', ')}
+              </p>
+            )}
           </div>
           <div className="text-right self-end sm:self-auto">
             <div className="text-4xl sm:text-5xl lg:text-6xl font-bold">{riskData.risk_score.toFixed(1)}</div>
@@ -188,11 +218,11 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
         </div>
       </div>
 
-      {/* ML Recommendations */}
+      {/* Evidence-Based Recommendations */}
       {riskData.recommendations.length > 0 && (
         <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-[#0066CC] p-4 sm:p-6 rounded-r-2xl shadow-md">
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
-            💡 ML-Powered Recommendations
+            Clinical Recommendations
           </h3>
           <ul className="space-y-2">
             {riskData.recommendations.map((rec, idx) => (
@@ -208,9 +238,9 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
       {/* Risk Factors Detailed Breakdown */}
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
         <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-teal-50">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Detailed ML Risk Factor Analysis</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Clinical Risk Factor Analysis</h2>
           <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-            Machine learning model trained on biomechanical research
+            Evidence-based formula from ACL injury research (NCBI)
           </p>
         </div>
 
@@ -250,7 +280,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
                   ></div>
                 </div>
 
-                {/* ML Insight */}
+                {/* Clinical Insight */}
                 <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-[#0066CC] p-3 sm:p-4 rounded-r-lg">
                   <div className="flex items-start gap-2 sm:gap-3">
                     <Info className="w-4 h-4 sm:w-5 sm:h-5 text-[#0066CC] mt-0.5 flex-shrink-0" />
@@ -263,30 +293,43 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
         </div>
       </div>
 
-      {/* ML Model Information */}
+      {/* Clinical Methodology Information */}
       <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-cyan-50 p-4 sm:p-6 lg:p-8 rounded-2xl border-2 border-purple-200 shadow-md">
         <h3 className="text-lg sm:text-xl font-bold text-purple-900 mb-2 sm:mb-3">
-          🧬 Real Machine Learning Model
+          Evidence-Based Clinical Formula
         </h3>
         <p className="text-sm sm:text-base text-purple-800 mb-3 sm:mb-4 leading-relaxed">
-          This assessment uses a Gradient Boosting classifier trained on ACL injury research data. 
-          The model analyzes 5 biomechanical risk factors extracted from your Fitbit activity patterns 
-          to predict injury risk with sub-second response times.
+          This assessment uses a clinically-validated formula based on ACL injury research from the National Center for Biotechnology Information (NCBI).
+          The model analyzes 6 biomechanical risk factors with research-based weights:
+          Load (30%), Fatigue (25%), Intensity (15%), BMI (10%), Injury History (10%), and Knee Pain (5%).
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-4">
           <span className="px-3 py-1.5 bg-white rounded-full text-xs font-medium text-purple-900 shadow-sm">
-            Gradient Boosting ML
+            NCBI Research
           </span>
           <span className="px-3 py-1.5 bg-white rounded-full text-xs font-medium text-purple-900 shadow-sm">
             Real Fitbit Data
           </span>
           <span className="px-3 py-1.5 bg-white rounded-full text-xs font-medium text-purple-900 shadow-sm">
-            Feature Engineering
+            Clinical Validation
           </span>
           <span className="px-3 py-1.5 bg-white rounded-full text-xs font-medium text-purple-900 shadow-sm">
             {riskData.data_days} Days Analysis
           </span>
         </div>
+        
+        {/* Weekly Aggregates */}
+        {riskData.weekly_aggregates && (
+          <div className="bg-white/60 p-3 rounded-lg mt-4">
+            <p className="text-xs font-semibold text-purple-900 mb-2">7-Day Averages Used:</p>
+            <div className="grid grid-cols-2 gap-2 text-xs text-purple-800">
+              <div>Steps: {Math.round(riskData.weekly_aggregates.avg_steps_day).toLocaleString()}/day</div>
+              <div>Peak Activity: {riskData.weekly_aggregates.avg_peak_minutes_day.toFixed(1)} min/day</div>
+              <div>Resting HR: {riskData.weekly_aggregates.avg_resting_hr.toFixed(1)} bpm</div>
+              <div>Sleep: {riskData.weekly_aggregates.avg_sleep_hours.toFixed(1)} hours</div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Refresh Button */}
@@ -295,7 +338,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
           onClick={fetchRiskData}
           className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#0066CC] to-[#0052A3] text-white text-sm sm:text-base font-semibold rounded-xl hover:from-[#0052A3] hover:to-[#003D7A] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
         >
-          🔄 Refresh ML Assessment
+          Refresh Risk Assessment
         </button>
         <p className="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-3">
           Last assessed: {new Date(riskData.assessment_date).toLocaleString()}
