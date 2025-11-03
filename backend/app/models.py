@@ -29,6 +29,23 @@ class User(Base):
     # Token expiration tracking
     token_expires_at = Column(DateTime, nullable=False)
     
+    # Manual User Profile Inputs (for evidence-based risk calculation)
+    height_cm = Column(Float, nullable=True)  # Height in centimeters
+    sex = Column(String, nullable=True)  # 'M', 'F', 'Other'
+    age = Column(Integer, nullable=True)  # Age in years
+    sport = Column(String, nullable=True)  # 'football', 'soccer', 'basketball', 'none'
+    limb_dominance = Column(String, nullable=True)  # 'left', 'right'
+    
+    # ACL Injury History
+    acl_history_flag = Column(Boolean, default=False)  # Previous ACL injury
+    acl_injury_date = Column(DateTime, nullable=True)  # Date of ACL injury/surgery
+    
+    # Self-Reported Health Metrics
+    knee_pain_score = Column(Integer, nullable=True)  # 0-10 scale
+    baseline_resting_hr = Column(Integer, nullable=True)  # Computed from first 14 days or set manually
+    rehab_status = Column(String, nullable=True)  # 'active_rehab', 'recovered', 'none'
+    weight_kg = Column(Float, nullable=True)  # Latest weight in kg (can also come from Fitbit)
+    
     # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

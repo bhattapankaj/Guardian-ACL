@@ -1,5 +1,5 @@
 """
-Real-time ACL injury risk assessment endpoints using ML model.
+Real-time ACL injury risk assessment endpoints using evidence-based formula.
 """
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 from app.database import get_db
 from app.models import User, ActivityData
-from app.ml_model import get_model
+from app.risk_calculator import compute_risk_score, generate_recommendations
 from app.encryption import decrypt_token
 from app.fitbit_auth import is_token_expired, refresh_access_token
 from app.fitbit_data import FitbitDataService
@@ -23,9 +23,9 @@ async def get_realtime_risk_assessment(
     db: Session = Depends(get_db)
 ) -> Dict:
     """
-    Get real-time ACL injury risk assessment using ML model.
+    Get real-time ACL injury risk assessment using evidence-based formula.
     
-    Fetches latest 14 days of activity data and runs through trained model.
+    Uses 7-day Fitbit data + user profile for clinical risk calculation.
     """
     # Get user from database
     user = db.query(User).filter(User.fitbit_user_id == user_id).first()
@@ -33,32 +33,103 @@ async def get_realtime_risk_assessment(
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found or disconnected")
     
-    # Get recent activity data (last 14 days)
-    two_weeks_ago = datetime.utcnow() - timedelta(days=14)
+    # Get recent activity data (last 7 days for risk calculation)
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
     activity_data = db.query(ActivityData).filter(
         ActivityData.user_id == user.id,
-        ActivityData.date >= two_weeks_ago.date()
+        ActivityData.date >= seven_days_ago.date()
     ).order_by(ActivityData.date.desc()).all()
     
-    if not activity_data:
-        # No data yet - return default assessment
+    if not activity_data or len(activity_data) < 3:
+        # Insufficient data - return default
         return {
             "status": "insufficient_data",
-            "message": "Not enough activity data yet. Connect your Fitbit and sync data.",
+            "message": "Not enough activity data yet. Need at least 3 days of Fitbit data.",
             "risk_score": None,
-            "recommendations": ["Connect your Fitbit and allow a few days of data collection."]
+            "risk_level": "Unknown",
+            "risk_color": "gray",
+            "confidence": "low",
+            "recommendations": [
+                "Connect your Fitbit and sync for at least 3 days to get accurate risk assessment.",
+                "Ensure your Fitbit app is syncing with the same email you used to log in."
+            ]
         }
     
-    # Load ML model
-    model = get_model()
+    # ============================================
+    # COMPUTE WEEKLY AGGREGATES FROM FITBIT DATA
+    # ============================================
     
-    # Extract features from activity data
-    features = model.extract_features(activity_data)
+    total_steps = sum(d.steps for d in activity_data if d.steps)
+    avg_steps_day = total_steps / len(activity_data) if activity_data else 0
     
-    # Get risk prediction
-    prediction = model.predict_risk(features)
+    # Peak/very active minutes
+    peak_minutes = [d.very_active_minutes or 0 for d in activity_data]
+    avg_peak_minutes_day = sum(peak_minutes) / len(peak_minutes) if peak_minutes else 0
     
-    # Add latest metrics from most recent day
+    # Resting heart rate
+    resting_hrs = [d.resting_heart_rate for d in activity_data if d.resting_heart_rate]
+    avg_resting_hr = sum(resting_hrs) / len(resting_hrs) if resting_hrs else 0
+    
+    # Sleep data
+    sleep_minutes = [d.sleep_duration_minutes for d in activity_data if d.sleep_duration_minutes]
+    avg_minutes_asleep = sum(sleep_minutes) / len(sleep_minutes) if sleep_minutes else 0
+    
+    # Weight (use latest or user profile)
+    latest_weight = None
+    for d in activity_data:
+        if hasattr(d, 'weight_kg') and d.weight_kg:
+            latest_weight = d.weight_kg
+            break
+    weight_kg = latest_weight or user.weight_kg or 70  # Default 70kg
+    
+    # High intensity days (>30 min very active)
+    high_intensity_days = sum(1 for m in peak_minutes if m > 30)
+    
+    # ============================================
+    # PREPARE FEATURE DICT
+    # ============================================
+    
+    features = {
+        'avg_steps_day': avg_steps_day,
+        'avg_peak_minutes_day': avg_peak_minutes_day,
+        'avg_resting_hr': avg_resting_hr,
+        'avg_minutes_asleep': avg_minutes_asleep,
+        'weight_kg': weight_kg,
+        'high_intensity_days': high_intensity_days
+    }
+    
+    # ============================================
+    # PREPARE USER PROFILE DICT
+    # ============================================
+    
+    user_profile = {
+        'height_cm': user.height_cm or 170,  # Default 170cm
+        'sex': user.sex or 'M',
+        'age': user.age or 25,
+        'sport': user.sport or 'none',
+        'acl_history_flag': user.acl_history_flag or False,
+        'baseline_resting_hr': user.baseline_resting_hr,
+        'knee_pain_score': user.knee_pain_score or 0,
+        'rehab_status': user.rehab_status,
+        'weight_kg': weight_kg
+    }
+    
+    # ============================================
+    # COMPUTE EVIDENCE-BASED RISK SCORE
+    # ============================================
+    
+    risk_result = compute_risk_score(features, user_profile)
+    
+    # ============================================
+    # GENERATE ACTIONABLE RECOMMENDATIONS
+    # ============================================
+    
+    recommendations = generate_recommendations(risk_result, features, user_profile)
+    
+    # ============================================
+    # LATEST METRICS FROM MOST RECENT DAY
+    # ============================================
+    
     latest = activity_data[0]
     
     return {
@@ -67,33 +138,47 @@ async def get_realtime_risk_assessment(
         "assessment_date": datetime.utcnow().isoformat(),
         "data_days": len(activity_data),
         
-        # ML Model Prediction
-        "risk_score": prediction['risk_score'],
-        "risk_level": prediction['risk_level'],
-        "risk_color": prediction['risk_color'],
+        # Risk Score (0-100 scale)
+        "risk_score": risk_result['risk_score'],
+        "risk_level": risk_result['risk_level'],
+        "risk_color": risk_result['risk_color'],
+        "confidence": risk_result['confidence'],
+        "missing_data": risk_result['missing_data'],
         
-        # Component Breakdown
-        "risk_components": prediction['components'],
+        # Component Breakdown (with weights and contributions)
+        "risk_components": {
+            "load": round(risk_result['components']['load']['contribution'] * 100, 1),
+            "fatigue": round(risk_result['components']['fatigue']['contribution'] * 100, 1),
+            "intensity": round(risk_result['components']['intensity']['contribution'] * 100, 1),
+            "bmi": round(risk_result['components']['bmi']['contribution'] * 100, 1),
+            "history": round(risk_result['components']['history']['contribution'] * 100, 1),
+            "pain": round(risk_result['components']['pain']['contribution'] * 100, 1)
+        },
+        
+        # Detailed component info
+        "component_details": risk_result['components'],
         
         # Latest Metrics
         "current_metrics": {
             "steps_today": latest.steps or 0,
-            "heart_rate_avg": latest.heart_rate or 0,
-            "sleep_hours": round((latest.sleep_minutes or 0) / 60, 1),
-            "calories": latest.calories or 0,
+            "heart_rate_avg": latest.resting_heart_rate or 0,
+            "sleep_hours": round((latest.sleep_duration_minutes or 0) / 60, 1),
             "distance_km": round((latest.distance or 0), 2),
         },
         
-        # Personalized Recommendations
-        "recommendations": prediction['recommendations'],
+        # Personalized Recommendations (evidence-based)
+        "recommendations": recommendations,
         
-        # Feature Details (for transparency)
-        "analysis_details": {
-            "step_asymmetry_pct": round(features['step_asymmetry'], 1),
-            "cadence_variance_pct": round(features['cadence_variance'], 1),
-            "load_spike_pct": round(features['load_spike'], 1),
-            "fatigue_score": round(features['fatigue_score'], 1),
-            "consistency_pct": round(features['consistency'], 1),
+        # Metadata for transparency
+        "metadata": risk_result['metadata'],
+        
+        # Feature Aggregates (for debugging/transparency)
+        "weekly_aggregates": {
+            "avg_steps_day": round(avg_steps_day, 0),
+            "avg_peak_minutes_day": round(avg_peak_minutes_day, 1),
+            "avg_resting_hr": round(avg_resting_hr, 1),
+            "avg_sleep_hours": round(avg_minutes_asleep / 60, 1),
+            "high_intensity_days": high_intensity_days
         }
     }
 
