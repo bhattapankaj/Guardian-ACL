@@ -452,7 +452,9 @@ export default function Home() {
             onProfileSaved={() => {
               // Refresh Dashboard and Risk tabs with new profile data
               setRefreshKey(prev => prev + 1);
-              console.log('✅ Profile saved - refreshing risk calculations...');
+              // Show the impact immediately
+              setActiveTab('dashboard');
+              console.log('✅ Profile saved - refreshing risk calculations and switching to Dashboard...');
             }}
           />
         )}
