@@ -31,10 +31,18 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
   const [noData, setNoData] = useState(false);
 
   useEffect(() => {
-    fetchActivityData();
+    if (userId) {
+      fetchActivityData();
+    }
   }, [userId]);
 
   const fetchActivityData = async () => {
+    if (!userId) {
+      setLoading(false);
+      setNoData(true);
+      return;
+    }
+    
     setLoading(true);
     setNoData(false);
     try {

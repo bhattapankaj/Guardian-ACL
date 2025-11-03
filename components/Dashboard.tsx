@@ -81,10 +81,19 @@ export default function Dashboard({ userId }: DashboardProps) {
   const [noData, setNoData] = useState(false);
 
   useEffect(() => {
-    fetchDashboardData();
+    if (userId) {
+      fetchDashboardData();
+    }
   }, [userId]);
 
   const fetchDashboardData = async () => {
+    if (!userId) {
+      setLoading(false);
+      setRiskLoading(false);
+      setNoData(true);
+      return;
+    }
+    
     setLoading(true);
     setRiskLoading(true);
     setNoData(false);

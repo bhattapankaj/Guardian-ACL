@@ -59,10 +59,18 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetchRiskData();
+    if (userId) {
+      fetchRiskData();
+    }
   }, [userId]);
 
   const fetchRiskData = async () => {
+    if (!userId) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    
     setLoading(true);
     setError(false);
     try {

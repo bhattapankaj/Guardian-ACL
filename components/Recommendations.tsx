@@ -30,10 +30,18 @@ export default function Recommendations({ userId }: RecommendationsProps) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetchRecommendations();
+    if (userId) {
+      fetchRecommendations();
+    }
   }, [userId]);
 
   const fetchRecommendations = async () => {
+    if (!userId) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    
     setLoading(true);
     setError(false);
     try {
