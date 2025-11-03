@@ -1,5 +1,6 @@
 """
 Database configuration and session management for ACL Guardian.
+Supports both SQLite (local dev) and PostgreSQL (production on Render).
 """
 
 from sqlalchemy import create_engine
@@ -11,15 +12,33 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Get database URL from environment or use default
+# Get database URL from environment or use default SQLite for local dev
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./acl_guardian.db")
 
-# Create SQLAlchemy engine
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
-    echo=False  # Set to True for SQL query logging
-)
+# Render provides DATABASE_URL with postgres://, but SQLAlchemy needs postgresql://
+# Fix the URL if it starts with postgres://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Configure engine based on database type
+if "postgresql" in DATABASE_URL:
+    # PostgreSQL settings for Render
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,  # Verify connections before using
+        pool_size=5,
+        max_overflow=10,
+        echo=False  # Set to True for SQL query logging
+    )
+    print("✅ Using PostgreSQL database (Production)")
+else:
+    # SQLite settings for local development
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=False
+    )
+    print("✅ Using SQLite database (Local Development)")
 
 # Create SessionLocal class for database sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
