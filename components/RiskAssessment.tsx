@@ -188,39 +188,39 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Overall Risk Card */}
-      <div className={`p-6 sm:p-8 lg:p-10 rounded-2xl border-2 shadow-lg ${getRiskColor(riskData.risk_color)}`}>
+      <div className={`p-6 sm:p-8 lg:p-10 rounded-2xl border-2 shadow-lg ${getRiskColor(riskData?.risk_color || 'gray')}`}>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-          <div className="flex-shrink-0">{getRiskIcon(riskData.risk_color)}</div>
+          <div className="flex-shrink-0">{getRiskIcon(riskData?.risk_color || 'gray')}</div>
           <div className="flex-1">
             <div className="text-xs sm:text-sm font-medium uppercase tracking-wide mb-1 sm:mb-2">
               Evidence-Based ACL Injury Risk Assessment
             </div>
             <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 uppercase">
-              {riskData.risk_level}
+              {riskData?.risk_level || 'UNKNOWN'}
             </div>
             <p className="text-sm sm:text-base lg:text-lg opacity-90 leading-relaxed">
-              {getRiskMessage(riskData.risk_level)}
+              {getRiskMessage(riskData?.risk_level || '')}
             </p>
             <div className="flex items-center gap-3 mt-3">
               <p className="text-xs sm:text-sm opacity-75">
-                Analyzed {riskData.data_days} days of your Fitbit activity data
+                Analyzed {riskData?.data_days || 0} days of your activity data
               </p>
               <span className={`px-2 py-1 rounded-md text-xs font-semibold uppercase ${
-                riskData.confidence === 'high' ? 'bg-white/30 text-current' :
-                riskData.confidence === 'medium' ? 'bg-white/40 text-current' :
+                riskData?.confidence === 'high' ? 'bg-white/30 text-current' :
+                riskData?.confidence === 'medium' ? 'bg-white/40 text-current' :
                 'bg-white/50 text-current'
               }`}>
-                {riskData.confidence} Confidence
+                {riskData?.confidence || 'low'} Confidence
               </span>
             </div>
-            {riskData.missing_data && riskData.missing_data.length > 0 && (
+            {riskData?.missing_data && riskData.missing_data.length > 0 && (
               <p className="text-xs opacity-60 mt-2">
                 Missing data: {riskData.missing_data.join(', ')}
               </p>
             )}
           </div>
           <div className="text-right self-end sm:self-auto">
-            <div className="text-4xl sm:text-5xl lg:text-6xl font-bold">{riskData.risk_score.toFixed(1)}</div>
+            <div className="text-4xl sm:text-5xl lg:text-6xl font-bold">{riskData?.risk_score?.toFixed(1) || '0.0'}</div>
             <div className="text-xs sm:text-sm font-medium mt-1">Risk Score</div>
           </div>
         </div>
@@ -255,6 +255,8 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
         <div className="divide-y divide-gray-200">
           {riskData && riskData.risk_components && Object.entries(riskData.risk_components).map(([key, value]) => {
             const factor = factorDescriptions[key];
+            if (!factor) return null; // Skip if factor description not found
+            
             const riskLevel = value < 30 ? 'low' : value < 60 ? 'moderate' : 'high';
             
             return (
