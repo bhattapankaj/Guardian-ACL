@@ -8,6 +8,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface ManualDataEntryProps {
   userId: string;
+  onSaveSuccess?: () => void; // Callback to switch to dashboard tab
 }
 
 interface ManualData {
@@ -22,7 +23,7 @@ interface ManualData {
   sleep_efficiency: number | null;
 }
 
-export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
+export default function ManualDataEntry({ userId, onSaveSuccess }: ManualDataEntryProps) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [data, setData] = useState<ManualData>({
@@ -48,9 +49,17 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
       const response = await axios.post(`${API_BASE_URL}/api/manual-data/${userId}`, data);
       console.log('✅ Manual data saved:', response.data);
       setSaved(true);
+      
+      // Show success message briefly, then redirect to dashboard
       setTimeout(() => {
         setSaved(false);
-        // Reset form for next entry
+        if (onSaveSuccess) {
+          onSaveSuccess(); // Switch to dashboard tab
+        }
+      }, 1500); // Reduced from 2000ms to 1500ms
+      
+      // Reset form for next entry (but user will be on dashboard)
+      setTimeout(() => {
         setData({
           date: new Date().toISOString().split('T')[0],
           steps: null,

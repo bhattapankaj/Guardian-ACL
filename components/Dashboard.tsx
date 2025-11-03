@@ -89,9 +89,9 @@ export default function Dashboard({ userId }: DashboardProps) {
     setRiskLoading(true);
     setNoData(false);
     
-    // Fetch activity data FIRST (fast)
+    // Fetch activity data FIRST (fast) - using universal endpoint that works for ALL users
     try {
-      const activityResponse = await axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=7`);
+      const activityResponse = await axios.get(`${API_BASE_URL}/api/activity/${userId}?days=7`);
       const activities = activityResponse.data.activities || [];
       setActivityData(activities);
       

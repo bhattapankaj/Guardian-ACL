@@ -420,7 +420,12 @@ export default function Home() {
         {activeTab === 'risk' && userId && <RiskAssessment userId={userId} />}
         {activeTab === 'recommendations' && userId && <Recommendations userId={userId} />}
         {activeTab === 'activity' && userId && <ActivityChart userId={userId} />}
-        {activeTab === 'manual-entry' && userId && <ManualDataEntry userId={userId} />}
+        {activeTab === 'manual-entry' && userId && (
+          <ManualDataEntry 
+            userId={userId} 
+            onSaveSuccess={() => setActiveTab('dashboard')} // Switch to dashboard after save
+          />
+        )}
       </div>
     </div>
   );

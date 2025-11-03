@@ -38,8 +38,8 @@ export default function ActivityChart({ userId }: ActivityChartProps) {
     setLoading(true);
     setNoData(false);
     try {
-      // Use the REAL Fitbit activity endpoint
-      const response = await axios.get(`${API_BASE_URL}/api/fitbit/activity/${userId}?days=14`);
+      // Use the universal activity endpoint that works for ALL users (Fitbit + Manual)
+      const response = await axios.get(`${API_BASE_URL}/api/activity/${userId}?days=14`);
       const activities = response.data.activities || [];
       
       if (activities.length === 0 || activities.every((a: ActivityData) => a.steps === 0)) {

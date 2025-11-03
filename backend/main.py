@@ -370,6 +370,65 @@ async def get_fitbit_activity(user_id: int, days: int = 7, db: Session = Depends
     return {"activities": activities}
 
 
+@app.get("/api/activity/{fitbit_user_id}")
+async def get_user_activity(fitbit_user_id: str, days: int = 7, db: Session = Depends(get_db)):
+    """
+    Universal endpoint to get activity data for ANY user (Fitbit or manual entry).
+    Accepts fitbit_user_id (string) which can be:
+    - Actual Fitbit user ID (e.g., "ABC123")
+    - Manual entry user ID (e.g., "manual_1762134167786")
+    
+    Returns last N days of activity data from database.
+    """
+    # Look up user by fitbit_user_id (works for both Fitbit and manual users)
+    user = db.query(User).filter(User.fitbit_user_id == fitbit_user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get activity data from database using the user's integer ID
+    end_date = date.today()
+    start_date = end_date - timedelta(days=days)
+    
+    activity_records = db.query(ActivityData).filter(
+        ActivityData.user_id == user.id,  # Use integer FK
+        ActivityData.date >= start_date,
+        ActivityData.date <= end_date
+    ).order_by(ActivityData.date.desc()).all()
+    
+    if not activity_records:
+        return {
+            "activities": [],
+            "message": "No activity data found. Please add your activity data first."
+        }
+    
+    # Format activity data for frontend (same format as Fitbit endpoint)
+    activities = []
+    for record in activity_records:
+        activities.append({
+            "date": record.date.isoformat(),
+            "steps": record.steps,
+            "distance": record.distance,
+            "calories": record.calories,
+            "active_minutes": record.active_minutes,
+            "sedentary_minutes": record.sedentary_minutes,
+            "lightly_active_minutes": record.lightly_active_minutes,
+            "fairly_active_minutes": record.fairly_active_minutes,
+            "very_active_minutes": record.very_active_minutes,
+            "heart_rate_avg": record.resting_heart_rate,
+            "sleep_hours": record.sleep_duration_minutes / 60 if record.sleep_duration_minutes else None,
+            "sleep_efficiency": record.sleep_efficiency,
+            "deep_sleep_minutes": record.deep_sleep_minutes,
+            "light_sleep_minutes": record.light_sleep_minutes,
+            "rem_sleep_minutes": record.rem_sleep_minutes,
+            "cadence": record.cadence_score,
+            "asymmetry_score": record.asymmetry_score or 0,
+            "load_score": record.load_score,
+            "impact_score": record.impact_score
+        })
+    
+    return {"activities": activities}
+
+
 @app.post("/api/user/{user_id}/profile")
 async def update_user_profile(user_id: str, profile_data: dict, db: Session = Depends(get_db)):
     """
