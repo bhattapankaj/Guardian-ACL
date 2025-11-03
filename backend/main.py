@@ -166,8 +166,8 @@ async def fitbit_callback(code: str, state: str = None, db: Session = Depends(ge
         user.email = profile.get('email')
         db.commit()
         
-        # Redirect back to frontend with success
-        return RedirectResponse(url=f"{FRONTEND_URL}/?connected=true&user_id={user_id}")
+        # Redirect back to frontend with success - use fitbit_user_id for consistency
+        return RedirectResponse(url=f"{FRONTEND_URL}/?connected=true&user_id={fitbit_user_id}")
         
     except Exception as e:
         print(f"❌ OAuth callback error: {e}")
