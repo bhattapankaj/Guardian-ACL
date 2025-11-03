@@ -80,15 +80,27 @@ export default function Home() {
 
     setSyncing(true);
     try {
+      console.log('🔄 Syncing with user ID:', targetUserId);
       const response = await axios.post(`${API_BASE_URL}/api/fitbit/sync/${targetUserId}`);
       const syncTime = new Date().toISOString();
       setLastSync(syncTime);
       localStorage.setItem('acl_guardian_last_sync', syncTime);
       
       console.log('✅ Sync complete:', response.data);
-    } catch (error) {
+      alert(`✅ Synced ${response.data.synced_count || 0} days of Fitbit data!`);
+      
+      // Refresh the page to show new data
+      window.location.reload();
+    } catch (error: any) {
       console.error('❌ Sync failed:', error);
-      alert('Failed to sync Fitbit data. Please try again.');
+      console.error('User ID attempted:', targetUserId);
+      console.error('Error details:', error.response?.data);
+      
+      if (error.response?.status === 404) {
+        alert('❌ Fitbit account not found. Please disconnect and reconnect to fix this issue.');
+      } else {
+        alert('Failed to sync Fitbit data. Please try again or reconnect.');
+      }
     } finally {
       setSyncing(false);
     }
