@@ -174,12 +174,13 @@ async def fitbit_callback(code: str, state: str = None, db: Session = Depends(ge
         return RedirectResponse(url=f"{FRONTEND_URL}/?connected=false&error={str(e)}")
 
 
-@app.post("/api/fitbit/disconnect/{user_id}")
-async def disconnect_fitbit(user_id: int, db: Session = Depends(get_db)):
+@app.post("/api/fitbit/disconnect/{fitbit_user_id}")
+async def disconnect_fitbit(fitbit_user_id: str, db: Session = Depends(get_db)):
     """
     Disconnect user's Fitbit account.
+    Accepts fitbit_user_id (string) for consistency with other endpoints.
     """
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.fitbit_user_id == fitbit_user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -193,15 +194,19 @@ async def disconnect_fitbit(user_id: int, db: Session = Depends(get_db)):
 # DATA SYNC ENDPOINTS
 # ============================================
 
-@app.post("/api/fitbit/sync/{user_id}")
-async def sync_fitbit_data(user_id: int, days: int = 14, db: Session = Depends(get_db)):
+@app.post("/api/fitbit/sync/{fitbit_user_id}")
+async def sync_fitbit_data(fitbit_user_id: str, days: int = 14, db: Session = Depends(get_db)):
     """
     Manually trigger Fitbit data sync for a user.
     Fetches last N days of activity, heart rate, and sleep data.
+    Accepts fitbit_user_id (string) for consistency with other endpoints.
     """
-    user = db.query(User).filter(User.id == user_id, User.is_active == True).first()
+    # Look up user by fitbit_user_id
+    user = db.query(User).filter(User.fitbit_user_id == fitbit_user_id, User.is_active == True).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found or inactive")
+    
+    user_id = user.id  # Get the integer ID for database operations
     
     # Check if token needs refresh
     if is_token_expired(user.token_expires_at):
