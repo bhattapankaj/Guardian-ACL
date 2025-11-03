@@ -234,7 +234,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           <div className="text-base sm:text-lg font-semibold uppercase tracking-wide">
             {riskLoading ? 'ANALYZING' : riskData?.risk_level || 'UNKNOWN'} Risk
           </div>
-          {!riskLoading && riskData && riskData.recommendations.length > 0 && (
+          {!riskLoading && riskData && riskData.recommendations && riskData.recommendations.length > 0 && (
             <div className="mt-3 p-3 bg-white/30 rounded-lg">
               <p className="text-sm font-medium">Top Recommendation:</p>
               <p className="text-xs mt-1">{riskData.recommendations[0]}</p>
@@ -327,7 +327,7 @@ export default function Dashboard({ userId }: DashboardProps) {
           ML Risk Factor Breakdown
         </h3>
         <div className="space-y-3 sm:space-y-4">
-          {riskData && Object.entries(riskData.risk_components).map(([key, value]) => (
+          {riskData && riskData.risk_components && Object.entries(riskData.risk_components).map(([key, value]) => (
             <div key={key}>
               <div className="flex justify-between text-xs sm:text-sm mb-2">
                 <span className="font-medium capitalize text-gray-700">

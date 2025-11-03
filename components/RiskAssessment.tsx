@@ -227,7 +227,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
       </div>
 
       {/* Evidence-Based Recommendations */}
-      {riskData.recommendations.length > 0 && (
+      {riskData && riskData.recommendations && riskData.recommendations.length > 0 && (
         <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-[#0066CC] p-4 sm:p-6 rounded-r-2xl shadow-md">
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
             Clinical Recommendations
@@ -253,7 +253,7 @@ export default function RiskAssessment({ userId }: RiskAssessmentProps) {
         </div>
 
         <div className="divide-y divide-gray-200">
-          {Object.entries(riskData.risk_components).map(([key, value]) => {
+          {riskData && riskData.risk_components && Object.entries(riskData.risk_components).map(([key, value]) => {
             const factor = factorDescriptions[key];
             const riskLevel = value < 30 ? 'low' : value < 60 ? 'moderate' : 'high';
             
