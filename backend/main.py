@@ -710,15 +710,18 @@ def save_manual_activity_data(user_id: str, data: ManualActivityData, db: Sessio
     """
     try:
         # Verify user exists, create if not (for manual entry users)
-        user = db.query(User).filter(User.user_id == user_id).first()
+        user = db.query(User).filter(User.fitbit_user_id == user_id).first()
         if not user:
             # Create a new user for manual data entry
+            # Manual users don't have real Fitbit tokens, so we use placeholders
+            from app.encryption import encrypt_token
+            dummy_token = encrypt_token("MANUAL_USER_NO_FITBIT")
+            
             user = User(
-                user_id=user_id,
-                fitbit_user_id=None,  # Manual entry users don't have Fitbit
-                access_token=None,
-                refresh_token=None,
-                token_expires_at=None
+                fitbit_user_id=user_id,  # Use user_id as fitbit_user_id for manual users
+                access_token_encrypted=dummy_token,
+                refresh_token_encrypted=dummy_token,
+                token_expires_at=datetime.utcnow()  # Set to now (expired)
             )
             db.add(user)
             db.commit()
@@ -729,7 +732,7 @@ def save_manual_activity_data(user_id: str, data: ManualActivityData, db: Sessio
         
         # Check if data already exists for this date
         existing = db.query(ActivityData).filter(
-            ActivityData.user_id == user_id,
+            ActivityData.user_id == user.id,  # Use user.id (integer PK)
             ActivityData.date == activity_date
         ).first()
         
@@ -761,7 +764,7 @@ def save_manual_activity_data(user_id: str, data: ManualActivityData, db: Sessio
         else:
             # Create new record
             new_activity = ActivityData(
-                user_id=user_id,
+                user_id=user.id,  # Use user.id (integer PK)
                 date=activity_date,
                 steps=data.steps or 0,
                 distance=data.distance_km or 0.0,
