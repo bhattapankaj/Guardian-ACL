@@ -45,7 +45,8 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
     setSaving(true);
     setSaved(false);
     try {
-      await axios.post(`${API_BASE_URL}/api/manual-data/${userId}`, data);
+      const response = await axios.post(`${API_BASE_URL}/api/manual-data/${userId}`, data);
+      console.log('✅ Manual data saved:', response.data);
       setSaved(true);
       setTimeout(() => {
         setSaved(false);
@@ -62,9 +63,11 @@ export default function ManualDataEntry({ userId }: ManualDataEntryProps) {
           sleep_efficiency: null
         });
       }, 2000);
-    } catch (error) {
-      console.error('Error saving manual data:', error);
-      alert('Failed to save data. Please try again.');
+    } catch (error: any) {
+      console.error('❌ Error saving manual data:', error);
+      console.error('Error details:', error.response?.data);
+      const errorMsg = error.response?.data?.detail || error.message || 'Unknown error';
+      alert(`Failed to save data: ${errorMsg}\n\nPlease check the console for details.`);
     } finally {
       setSaving(false);
     }
