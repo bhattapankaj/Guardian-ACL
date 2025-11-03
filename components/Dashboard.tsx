@@ -280,8 +280,8 @@ export default function Dashboard({ userId }: DashboardProps) {
             <Footprints className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
           <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-            {todayActivity?.steps > 0 ? todayActivity.steps.toLocaleString() : 
-             riskData?.current_metrics?.steps_today > 0 ? riskData.current_metrics.steps_today.toLocaleString() : 
+            {(todayActivity?.steps ?? 0) > 0 ? (todayActivity?.steps ?? 0).toLocaleString() : 
+             (riskData?.current_metrics?.steps_today ?? 0) > 0 ? (riskData?.current_metrics?.steps_today ?? 0).toLocaleString() : 
              '0'}
           </div>
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
@@ -295,8 +295,8 @@ export default function Dashboard({ userId }: DashboardProps) {
             <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
           </div>
           <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-            {todayActivity?.heart_rate_avg > 0 ? todayActivity.heart_rate_avg : 
-             riskData?.current_metrics?.heart_rate_avg > 0 ? riskData.current_metrics.heart_rate_avg : 
+            {(todayActivity?.heart_rate_avg ?? 0) > 0 ? (todayActivity?.heart_rate_avg ?? 0) : 
+             (riskData?.current_metrics?.heart_rate_avg ?? 0) > 0 ? (riskData?.current_metrics?.heart_rate_avg ?? 0) : 
              '—'}
           </div>
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">bpm average</div>
@@ -308,8 +308,8 @@ export default function Dashboard({ userId }: DashboardProps) {
             <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
           </div>
           <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-            {todayActivity?.distance > 0 ? todayActivity.distance.toFixed(2) : 
-             riskData?.current_metrics?.distance_km > 0 ? riskData.current_metrics.distance_km.toFixed(2) : 
+            {(todayActivity?.distance ?? 0) > 0 ? (todayActivity?.distance ?? 0).toFixed(2) : 
+             (riskData?.current_metrics?.distance_km ?? 0) > 0 ? (riskData?.current_metrics?.distance_km ?? 0).toFixed(2) : 
              '0.00'}
           </div>
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">km today</div>
@@ -321,8 +321,8 @@ export default function Dashboard({ userId }: DashboardProps) {
             <Moon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
           </div>
           <div className="text-3xl sm:text-4xl font-bold text-slate-900">
-            {todayActivity?.sleep_hours > 0 ? todayActivity.sleep_hours.toFixed(1) : 
-             riskData?.current_metrics?.sleep_hours > 0 ? riskData.current_metrics.sleep_hours.toFixed(1) : 
+            {(todayActivity?.sleep_hours ?? 0) > 0 ? (todayActivity?.sleep_hours ?? 0).toFixed(1) : 
+             (riskData?.current_metrics?.sleep_hours ?? 0) > 0 ? (riskData?.current_metrics?.sleep_hours ?? 0).toFixed(1) : 
              '0.0'}
           </div>
           <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">hours</div>

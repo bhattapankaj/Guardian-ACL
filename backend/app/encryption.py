@@ -51,19 +51,3 @@ def decrypt_token(encrypted_token: str) -> str:
     
     decrypted = cipher.decrypt(encrypted_token.encode())
     return decrypted.decode()
-
-
-# Example usage (for testing only - remove in production)
-if __name__ == "__main__":
-    # Test encryption/decryption
-    test_token = "test_access_token_12345"
-    
-    encrypted = encrypt_token(test_token)
-    print(f"Original:  {test_token}")
-    print(f"Encrypted: {encrypted}")
-    
-    decrypted = decrypt_token(encrypted)
-    print(f"Decrypted: {decrypted}")
-    
-    assert test_token == decrypted, "Encryption/decryption failed!"
-    print("✅ Encryption test passed!")
