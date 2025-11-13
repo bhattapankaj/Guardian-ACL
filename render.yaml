@@ -1,0 +1,59 @@
+services:
+  # Backend API Service
+  - type: web
+    name: acl-guardian-backend
+    runtime: python
+    plan: free  # Change to 'starter' or higher for production
+    
+    # Build configuration
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    
+    # Start command - Must listen on 0.0.0.0 and use PORT env var
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    
+    # Health check endpoint
+    healthCheckPath: /health
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      
+      - key: FRONTEND_URL
+        value: https://acl-guardian.vercel.app  # Update with your Vercel URL
+      
+      - key: DATABASE_URL
+        sync: false  # Manually set in Render dashboard with Supabase connection string
+      
+      - key: SUPABASE_URL
+        sync: false  # Set in Render dashboard
+      
+      - key: SUPABASE_KEY
+        sync: false  # Set in Render dashboard (use service role key)
+      
+      - key: ENCRYPTION_KEY
+        sync: false  # Set in Render dashboard (32-byte base64 key)
+      
+      - key: FITBIT_CLIENT_ID
+        sync: false  # Set in Render dashboard
+      
+      - key: FITBIT_CLIENT_SECRET
+        sync: false  # Set in Render dashboard
+      
+      - key: FITBIT_REDIRECT_URI
+        value: https://acl-guardian-backend.onrender.com/api/fitbit/callback  # Update with your Render URL
+    
+    # Auto-deploy from Git
+    autoDeploy: true
+    
+    # Regions (choose closest to your users)
+    region: oregon  # Options: oregon, frankfurt, singapore, ohio
+    
+    # Scaling configuration
+    numInstances: 1  # Increase for production traffic
+    
+    # Persistent disk for ML models (optional - Supabase Storage preferred)
+    # disk:
+    #   name: ml-models
+    #   mountPath: /opt/render/project/backend/models
+    #   sizeGB: 1

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Activity, Heart, Footprints, TrendingUp, AlertCircle, Flame, Moon, Bike, Timer } from 'lucide-react';
+import { Activity, Heart, Footprints, TrendingUp, AlertCircle, Flame, Moon, Bike, Timer, ThumbsUp, ThumbsDown, CheckCircle, XCircle } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -79,6 +79,8 @@ export default function Dashboard({ userId }: DashboardProps) {
   const [activityData, setActivityData] = useState<ActivityData[]>([]);
   const [riskData, setRiskData] = useState<MLRiskData | null>(null);
   const [noData, setNoData] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -124,6 +126,41 @@ export default function Dashboard({ userId }: DashboardProps) {
       console.error('Error fetching ML risk data:', error);
     } finally {
       setRiskLoading(false);
+    }
+  };
+
+  const submitFeedback = async (isAccurate: boolean) => {
+    if (!userId || !riskData || !todayActivity) return;
+    
+    setFeedbackLoading(true);
+    
+    try {
+      const feedbackData = {
+        user_id: userId,
+        date: new Date().toISOString().split('T')[0],
+        steps: todayActivity.steps || 0,
+        active_minutes: todayActivity.active_minutes || 0,
+        resting_hr: todayActivity.heart_rate_avg || 70,
+        peak_hr_minutes: todayActivity.very_active_minutes || 0,
+        sleep_efficiency: todayActivity.sleep_efficiency || 85,
+        minutes_asleep: todayActivity.sleep_hours ? Math.round(todayActivity.sleep_hours * 60) : 0,
+        weight: 70, // Default - ideally get from user profile
+        acl_history: false, // Default - ideally get from user profile
+        knee_pain: 0, // Default - ideally get from user input
+        formula_risk: riskData.risk_score / 100, // Convert to 0-1 range
+        feedback: isAccurate
+      };
+      
+      await axios.post(`${API_BASE_URL}/api/feedback`, feedbackData);
+      setFeedbackSubmitted(true);
+      
+      // Show success message for 3 seconds
+      setTimeout(() => setFeedbackSubmitted(false), 3000);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      alert('Failed to submit feedback. Please try again.');
+    } finally {
+      setFeedbackLoading(false);
     }
   };
 
@@ -296,6 +333,55 @@ export default function Dashboard({ userId }: DashboardProps) {
           </div>
         )}
       </div>
+
+      {/* Feedback Section - Help improve predictions */}
+      {!riskLoading && riskData && !feedbackSubmitted && (
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-2xl shadow-md border-2 border-indigo-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-gray-900 mb-1">
+                How accurate is this prediction?
+              </h3>
+              <p className="text-sm text-gray-600">
+                Your feedback helps our AI learn and improve predictions for everyone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => submitFeedback(true)}
+                disabled={feedbackLoading}
+                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ThumbsUp className="w-5 h-5" />
+                <span>Accurate</span>
+              </button>
+              <button
+                onClick={() => submitFeedback(false)}
+                disabled={feedbackLoading}
+                className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ThumbsDown className="w-5 h-5" />
+                <span>Not Accurate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Success Message */}
+      {feedbackSubmitted && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-2xl shadow-md border-2 border-green-300">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-8 h-8 text-green-600" />
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Thank you for your feedback! 🎉</h3>
+              <p className="text-sm text-gray-600">
+                Your input helps train our AI model. We'll use this to improve predictions tonight at 7 PM CST.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Activity Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

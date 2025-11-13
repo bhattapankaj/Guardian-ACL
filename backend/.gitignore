@@ -18,6 +18,10 @@ ENV/
 *.sqlite3
 acl_guardian.db
 
+# ML Models (stored in Supabase, not in Git)
+models/
+*.pkl
+
 # Logs
 *.log
 backend.log

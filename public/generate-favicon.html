@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACL Guardian Favicon Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0066CC, #00CC88);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #0066CC;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        canvas {
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            background: linear-gradient(135deg, #0066CC, #0052A3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .preview-item {
+            text-align: center;
+        }
+        .preview-item img {
+            display: block;
+            margin: 10px auto;
+            border: 1px solid #E2E8F0;
+            border-radius: 4px;
+        }
+        .preview-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+        .instructions {
+            background: #F8FAFC;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+            max-width: 600px;
+        }
+        .instructions h3 {
+            color: #0066CC;
+            margin-top: 0;
+        }
+        .instructions ol {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 10px 0;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ ACL Guardian Favicon Generator</h1>
+        <p>Generate favicon files for your ACL Guardian app</p>
+        
+        <canvas id="favicon" width="512" height="512"></canvas>
+        
+        <div class="buttons">
+            <button onclick="downloadFavicon('favicon.ico', 32)">Download favicon.ico (32x32)</button>
+            <button onclick="downloadFavicon('favicon-16x16.png', 16)">Download 16x16</button>
+            <button onclick="downloadFavicon('favicon-32x32.png', 32)">Download 32x32</button>
+            <button onclick="downloadFavicon('apple-touch-icon.png', 180)">Download Apple Touch Icon</button>
+            <button onclick="downloadFavicon('android-chrome-192x192.png', 192)">Download Android 192</button>
+            <button onclick="downloadFavicon('android-chrome-512x512.png', 512)">Download Android 512</button>
+        </div>
+        
+        <div class="preview">
+            <div class="preview-item">
+                <div class="preview-label">16x16 Preview</div>
+                <canvas id="preview-16" width="16" height="16"></canvas>
+            </div>
+            <div class="preview-item">
+                <div class="preview-label">32x32 Preview</div>
+                <canvas id="preview-32" width="32" height="32"></canvas>
+            </div>
+            <div class="preview-item">
+                <div class="preview-label">64x64 Preview</div>
+                <canvas id="preview-64" width="64" height="64"></canvas>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click each download button above to save the favicon files</li>
+                <li>Save all files to the <code>/public</code> folder of your project</li>
+                <li>Replace existing favicon files if prompted</li>
+                <li>Restart your Next.js development server</li>
+                <li>Clear your browser cache (Ctrl+Shift+Del) to see the new favicon</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function drawFavicon(canvas) {
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Create gradient background (circle)
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0066CC');
+            gradient.addColorStop(0.5, '#00CC88');
+            gradient.addColorStop(1, '#0052A3');
+            
+            // Draw circular background
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw shield shape (protection symbol)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.beginPath();
+            const shieldWidth = size * 0.5;
+            const shieldHeight = size * 0.6;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const startY = centerY - shieldHeight / 2;
+            
+            ctx.moveTo(centerX, startY);
+            ctx.lineTo(centerX - shieldWidth/2, startY + shieldHeight * 0.15);
+            ctx.lineTo(centerX - shieldWidth/2, startY + shieldHeight * 0.6);
+            ctx.quadraticCurveTo(centerX - shieldWidth/2, startY + shieldHeight * 0.8, centerX, startY + shieldHeight);
+            ctx.quadraticCurveTo(centerX + shieldWidth/2, startY + shieldHeight * 0.8, centerX + shieldWidth/2, startY + shieldHeight * 0.6);
+            ctx.lineTo(centerX + shieldWidth/2, startY + shieldHeight * 0.15);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw knee icon (stylized)
+            const kneeScale = size * 0.04;
+            const kneeX = centerX - size * 0.1;
+            const kneeY = centerY - size * 0.05;
+            
+            // Upper bone (femur)
+            ctx.fillStyle = '#0066CC';
+            ctx.fillRect(kneeX, kneeY - kneeScale * 5, kneeScale * 2, kneeScale * 5);
+            
+            // Knee joint (circle)
+            ctx.fillStyle = '#00CC88';
+            ctx.strokeStyle = '#0066CC';
+            ctx.lineWidth = size * 0.01;
+            ctx.beginPath();
+            ctx.arc(kneeX + kneeScale, kneeY, kneeScale * 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Lower bone (tibia)
+            ctx.fillStyle = '#0066CC';
+            ctx.fillRect(kneeX, kneeY + kneeScale * 0.5, kneeScale * 2, kneeScale * 5);
+            
+            // ACL ligament (crossing line)
+            ctx.strokeStyle = '#FF6B35';
+            ctx.lineWidth = size * 0.015;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(kneeX, kneeY - kneeScale);
+            ctx.lineTo(kneeX + kneeScale * 2, kneeY + kneeScale);
+            ctx.stroke();
+            
+            // Checkmark (protection indicator)
+            const checkScale = size * 0.15;
+            const checkX = centerX + size * 0.15;
+            const checkY = centerY + size * 0.05;
+            
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.035;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(checkX - checkScale * 0.5, checkY);
+            ctx.lineTo(checkX - checkScale * 0.2, checkY + checkScale * 0.4);
+            ctx.lineTo(checkX + checkScale * 0.6, checkY - checkScale * 0.5);
+            ctx.stroke();
+        }
+        
+        // Draw main favicon
+        const mainCanvas = document.getElementById('favicon');
+        drawFavicon(mainCanvas);
+        
+        // Draw previews
+        function drawPreview(size) {
+            const canvas = document.getElementById(`preview-${size}`);
+            drawFavicon(canvas);
+        }
+        
+        drawPreview(16);
+        drawPreview(32);
+        drawPreview(64);
+        
+        // Download function
+        function downloadFavicon(filename, size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            drawFavicon(canvas);
+            
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+    </script>
+</body>
+</html>

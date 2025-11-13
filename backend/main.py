@@ -21,9 +21,21 @@ from app.fitbit_data import FitbitDataService, calculate_cadence, calculate_load
 # Import ML risk assessment endpoints
 from app.risk_api import router as risk_router
 
+# Import new Supabase-integrated routes
+from routes.feedback import router as feedback_router
+from routes.predict import router as predict_router
+
+# Import training module
+from train import retrain_all_models, manual_train
+
+# APScheduler for automated retraining
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import pytz
+
 load_dotenv()
 
-app = FastAPI(title="ACL Guardian API", version="2.0.0 - Real Fitbit Integration")
+app = FastAPI(title="ACL Guardian API", version="3.0.0 - Production with Supabase & ML")
 
 # Configure CORS
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
@@ -36,15 +48,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize scheduler
+scheduler = BackgroundScheduler()
+
 # Initialize database on startup
 @app.on_event("startup")
 async def startup_event():
     init_db()
     print("🚀 ACL Guardian API started with Fitbit integration!")
     print(f"📡 Frontend URL: {FRONTEND_URL}")
+    
+    # Start nightly retraining scheduler (7:00 PM CST)
+    cst = pytz.timezone('America/Chicago')
+    scheduler.add_job(
+        retrain_all_models,
+        trigger=CronTrigger(hour=19, minute=0, timezone=cst),  # 7:00 PM CST
+        id='nightly_retraining',
+        name='Nightly ML Model Retraining',
+        replace_existing=True
+    )
+    scheduler.start()
+    print("⏰ Nightly retraining scheduler started (7:00 PM CST)")
 
-# Include ML risk assessment router
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Shutdown scheduler gracefully"""
+    scheduler.shutdown()
+    print("🛑 Scheduler stopped")
+
+# Include all routers
 app.include_router(risk_router, tags=["Risk Assessment - ML Powered"])
+app.include_router(feedback_router, prefix="/api", tags=["Feedback System"])
+app.include_router(predict_router, prefix="/api", tags=["ACL Risk Prediction"])
 
 # Models
 class FitbitAuthRequest(BaseModel):
@@ -884,6 +919,27 @@ def generate_sample_data():
         "user_id": user_id,
         "demo_link": f"/user/{user_id}/risk-assessment"
     }
+
+
+# ============================================
+# MANUAL TRAINING ENDPOINT (FOR TESTING)
+# ============================================
+
+@app.post("/api/train")
+async def trigger_manual_training(user_id: str = "global"):
+    """
+    Manually trigger model training.
+    Useful for testing or manual retraining outside the scheduled time.
+    
+    Args:
+        user_id: User ID to train model for (default: "global")
+    
+    Returns:
+        Training results with metrics
+    """
+    result = manual_train(user_id)
+    return result
+
 
 if __name__ == "__main__":
     import uvicorn
