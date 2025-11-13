@@ -21,5 +21,7 @@ psycopg2-binary==2.9.9
 apscheduler==3.10.4
 pytz==2024.1
 
-# Supabase integration (let it resolve dependencies automatically)
+# Supabase integration (let pip resolve compatible versions)
 supabase>=2.3.4
+postgrest>=0.16.0
+storage3>=0.7.4
